@@ -24,6 +24,10 @@
 		<spring.cloud.config.version>1.2.3.RELEASE</spring.cloud.config.version>
 		<unit-tests.skip>false</unit-tests.skip>
 		<integration-tests.skip>true</integration-tests.skip>
+		<maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+		<!-- TDS Version Props -->
+		<tds-common.version>0.0.6</tds-common.version>
+		<tds-exam-client.version>0.0.8</tds-exam-client.version>
 	</properties>
 
 	<dependencyManagement>
@@ -43,7 +47,12 @@
 		<dependency>
 			<groupId>org.opentestsystem.delivery</groupId>
 			<artifactId>tds-exam-client</artifactId>
-			<version>${project.version}</version>
+			<version>${tds-exam-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opentestsystem.delivery</groupId>
+			<artifactId>tds-common</artifactId>
+			<version>${tds-common.version}</version>
 		</dependency>
 
 		<!-- Spring -->
@@ -117,7 +126,11 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven.release.plugin.version}</version>
+			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
