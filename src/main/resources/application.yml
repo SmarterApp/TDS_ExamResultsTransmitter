@@ -1,0 +1,8 @@
+server:
+  port: 8089
+  undertow:
+    buffer-size: 16384
+    buffers-per-region: 20
+    io-threads: 64
+    worker-threads: 512
+    direct-buffers: true
