@@ -1,16 +1,32 @@
 package tds.exam.results.web.endpoints;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.xml.bind.JAXBException;
+
+import tds.exam.results.trt.TDSReport;
 
 import java.util.UUID;
 
+import tds.exam.results.services.ExamResultsService;
+
 @RestController
 public class ResultsController {
-    @GetMapping(value = "/{examId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String findExamResults(@PathVariable final UUID examId) {
-        return "test";
+    private final ExamResultsService examResultsService;
+
+    @Autowired
+    public ResultsController(final ExamResultsService examResultsService) {
+        this.examResultsService = examResultsService;
+    }
+
+    @GetMapping(value = "/{examId}", produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public TDSReport findExamResults(@PathVariable final UUID examId) throws JAXBException {
+        return examResultsService.findExamResults(examId);
     }
 }

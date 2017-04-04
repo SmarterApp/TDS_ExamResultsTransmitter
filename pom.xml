@@ -25,9 +25,12 @@
 		<unit-tests.skip>false</unit-tests.skip>
 		<integration-tests.skip>true</integration-tests.skip>
 		<maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+		<jaxb-maven.version>2.3.1</jaxb-maven.version>
 		<!-- TDS Version Props -->
 		<tds-common.version>0.0.6</tds-common.version>
-		<tds-exam-client.version>0.0.8</tds-exam-client.version>
+		<tds-exam-client.version>0.0.9-SNAPSHOT</tds-exam-client.version>
+		<tds-session-client.version>0.0.4</tds-session-client.version>
+		<tds-assessment-client.version>0.0.6</tds-assessment-client.version>
 	</properties>
 
 	<dependencyManagement>
@@ -48,6 +51,16 @@
 			<groupId>org.opentestsystem.delivery</groupId>
 			<artifactId>tds-exam-client</artifactId>
 			<version>${tds-exam-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opentestsystem.delivery</groupId>
+			<artifactId>tds-session-client</artifactId>
+			<version>${tds-session-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opentestsystem.delivery</groupId>
+			<artifactId>tds-assessment-client</artifactId>
+			<version>${tds-assessment-client.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opentestsystem.delivery</groupId>
@@ -178,6 +191,23 @@
 							<include>${project.build.finalName}.jar</include>
 						</resource>
 					</resources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>${jaxb-maven.version}</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- The package of your generated sources -->
+					<packageName>tds.exam.results.trt</packageName>
 				</configuration>
 			</plugin>
 		</plugins>
