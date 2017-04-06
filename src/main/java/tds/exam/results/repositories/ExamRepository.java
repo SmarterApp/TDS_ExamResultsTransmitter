@@ -7,7 +7,7 @@ import tds.exam.ExpandableExam;
 /**
  * A repository for fetching an {@link tds.exam.ExpandableExam} from the exam service
  */
-public interface ExpandableExamRepository {
+public interface ExamRepository {
     /**
      * Finds an {@link tds.exam.ExpandableExam} for the given examId
      *

@@ -15,7 +15,7 @@ public class TestMapper {
         test.setName(assessment.getKey());
         test.setSubject(assessment.getSubject());
         test.setTestId(assessment.getAssessmentId());
-        // Simply select the first bank key from any item (See ReportingDLL line [1321]
+        // Simply select the first bank key from any item (See ReportingDLL line [1321])
         final Long bankKey = assessment.getSegments().get(0).getItems().stream()
             .map(item -> Long.parseLong(parseBankKeyFromId(item.getId())))
             .findFirst().get();
@@ -32,6 +32,10 @@ public class TestMapper {
     }
 
     private static String parseBankKeyFromId(final String itemId) {
+        if (!itemId.contains("-")) {
+            throw new IllegalArgumentException(String.format("Could not parse bank key out of the itemId '%s'.", itemId));
+        }
+
         return itemId.split("-")[0];
     }
 }
