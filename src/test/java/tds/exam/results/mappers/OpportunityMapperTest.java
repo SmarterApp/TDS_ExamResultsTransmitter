@@ -2,8 +2,6 @@ package tds.exam.results.mappers;
 
 import org.joda.time.Instant;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,6 @@ import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class OpportunityMapperTest {
     @Test
     public void shouldMapExpandableExamToOpportunity() {

@@ -1,8 +1,6 @@
 package tds.exam.results.mappers;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 
@@ -14,7 +12,6 @@ import tds.exam.results.trt.TDSReport;
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class TestMapperTest {
 
     @Test

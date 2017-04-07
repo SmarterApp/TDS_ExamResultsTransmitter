@@ -32,6 +32,7 @@ import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
 import tds.exam.results.trt.TDSReport;
+import tds.exam.results.validation.TDSReportValidator;
 import tds.session.Session;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
@@ -53,9 +54,12 @@ public class ExamResultsServiceImplTest {
     @Mock
     SessionService mockSessionService;
 
+    @Mock
+    TDSReportValidator mockReportValidator;
+
     @Before
     public void setup() throws JAXBException {
-        examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService);
+        examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService, mockReportValidator);
     }
 
     @Test

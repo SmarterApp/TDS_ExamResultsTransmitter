@@ -30,7 +30,7 @@
 		<tds-common.version>0.0.6</tds-common.version>
 		<tds-exam-client.version>0.0.9</tds-exam-client.version>
 		<tds-session-client.version>0.0.4</tds-session-client.version>
-		<tds-assessment-client.version>0.0.6</tds-assessment-client.version>
+		<tds-assessment-client.version>0.0.7</tds-assessment-client.version>
 	</properties>
 
 	<dependencyManagement>

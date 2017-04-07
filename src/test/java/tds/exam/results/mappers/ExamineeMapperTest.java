@@ -1,15 +1,9 @@
 package tds.exam.results.mappers;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import tds.exam.Exam;
 import tds.exam.ExamineeAttribute;
-import tds.exam.ExamineeNote;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
 import tds.exam.results.trt.Context;
@@ -19,7 +13,6 @@ import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ExamineeMapperTest {
 
     @Test

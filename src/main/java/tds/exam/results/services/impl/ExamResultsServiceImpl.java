@@ -28,6 +28,7 @@ import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
 import tds.exam.results.trt.TDSReport;
+import tds.exam.results.validation.TDSReportValidator;
 import tds.session.Session;
 
 @Service
@@ -35,19 +36,17 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     private final ExamService examService;
     private final SessionService sessionService;
     private final AssessmentService assessmentService;
-    private final JAXBContext contextObj;
+    private final TDSReportValidator tdsReportValidator;
 
     @Autowired
     public ExamResultsServiceImpl(final ExamService examService,
                                   final SessionService sessionService,
-                                  final AssessmentService assessmentService) throws JAXBException {
+                                  final AssessmentService assessmentService,
+                                  final TDSReportValidator tdsReportValidator) {
         this.examService = examService;
         this.sessionService = sessionService;
         this.assessmentService = assessmentService;
-
-        contextObj = JAXBContext.newInstance(TDSReport.class);
-        Marshaller marshallerObj = contextObj.createMarshaller();
-        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        this.tdsReportValidator = tdsReportValidator;
     }
 
     @Override
@@ -63,18 +62,10 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         report.setTest(TestMapper.mapTest(assessment));
         CommentMapper.mapComments(report.getComment(), expandableExam);
 
-        validateReport(report);
+        tdsReportValidator.validateReport(report);
 
         return report;
     }
 
-    private void validateReport(final TDSReport results) throws JAXBException, SAXException, IOException {
-        JAXBSource source = new JAXBSource(contextObj, results);
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = sf.newSchema(new File("src/main/xsd/TestResultsTransmissionFormat_Schema.xsd"));
 
-        Validator validator = schema.newValidator();
-        // TODO: Enable the validator once all "required" properties are added to Exam/Assessment
-//        validator.validate(source);
-    }
 }
