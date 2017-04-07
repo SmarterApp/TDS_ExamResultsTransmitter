@@ -12,7 +12,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
-import java.io.IOException;
 
 import tds.exam.results.trt.TDSReport;
 
@@ -39,7 +38,7 @@ public class TDSReportValidator {
             JAXBSource source = new JAXBSource(jaxbContext, results);
 //             TODO: Enable the validator once all "required" properties are added to Exam/Assessment
 //            validator.validate(source);
-        } catch (SAXException | JAXBException | IOException e) {
+        } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
     }
