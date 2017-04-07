@@ -26,6 +26,7 @@ public class TDSReportValidator {
 
         try {
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            //TODO: Investigate loading this up via classloader/classpath
             Schema schema = sf.newSchema(new File("src/main/xsd/TestResultsTransmissionFormat_Schema.xsd"));
             validator = schema.newValidator();
         } catch (SAXException e) {
