@@ -33,6 +33,7 @@ import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
+import tds.exam.results.validation.impl.XSDBackedTDSReportValidator;
 import tds.session.Session;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
