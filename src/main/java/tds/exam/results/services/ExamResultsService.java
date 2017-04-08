@@ -24,5 +24,5 @@ public interface ExamResultsService {
      * @throws SAXException
      * @throws IOException
      */
-    TDSReport findExamResults(UUID examId) throws JAXBException, SAXException, IOException;
+    TDSReport findExamResults(UUID examId);
 }

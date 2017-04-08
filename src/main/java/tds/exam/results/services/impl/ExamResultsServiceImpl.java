@@ -42,7 +42,7 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     }
 
     @Override
-    public TDSReport findExamResults(final UUID examId) throws SAXException, IOException, JAXBException {
+    public TDSReport findExamResults(final UUID examId) {
         TDSReport report = new TDSReport();
         final ExpandableExam expandableExam = examService.findExpandableExam(examId);
         final Exam exam = expandableExam.getExam();
@@ -58,6 +58,4 @@ public class ExamResultsServiceImpl implements ExamResultsService {
 
         return report;
     }
-
-
 }
