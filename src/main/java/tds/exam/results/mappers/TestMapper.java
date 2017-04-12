@@ -1,7 +1,6 @@
 package tds.exam.results.mappers;
 
 
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class TestMapper {
             .findFirst().get();
 
         test.setBankKey(bankKey);
-        test.setHandScoreProject(new Long(assessment.getHandScoreProjectId()));
+        test.setHandScoreProject(Long.valueOf(assessment.getHandScoreProjectId()));
         test.setContract(assessment.getContract());
         test.setMode(TEST_MODE_ONLINE);
         test.setGrade(createGradeStringFromGrades(assessment.getGrades()));
@@ -52,6 +51,7 @@ public class TestMapper {
         return itemId.split("-")[0];
     }
 
+    /* Rule: If a date range, select the latest year */
     private static long parseLatestAcademicYear(final String academicYearString) {
         // If this is a range date, pick the latest year
         if (academicYearString.contains("-")) {
@@ -61,7 +61,22 @@ public class TestMapper {
         return Long.parseLong(academicYearString);
     }
 
+    /**
+     * Creates the grade string from the list of grades.
+     *
+     * Rules:
+     *      If no grades are present, return an empty string
+     *      If a single grade is present, return it
+     *      If the grades is a contiguous range, hyphenate it (i.e. 7, 8, 9 =  7-9)
+     *      If the grade range is a standard high school range (i.e. 9-12), return "HS"
+     *      Otherwise, return the list of grades comma delimited, in ascending order.
+     *      If non-numeric grades are present, they should be listed first
+     *
+     * @param grades The list of grade strings
+     * @return The properly formatted grade string
+     */
     private static String createGradeStringFromGrades(final List<String> grades) {
+        /* This logic corresponds to logic found in legacy - ReportingDLL.TestGradeSpan_F(), line 1353 */
         if (grades.size() == 0) {
             return StringUtils.EMPTY;
         } else if (grades.size() == 1) {
@@ -70,7 +85,6 @@ public class TestMapper {
 
         int minGrade = Integer.MAX_VALUE;
         int maxGrade = Integer.MIN_VALUE;
-        int numOfIntegerGrades = 0;
         List<Integer> intGrades = new ArrayList<>();
 
         for (String grade : grades) {
@@ -78,18 +92,17 @@ public class TestMapper {
                 int g = Integer.parseInt(grade);
                 minGrade = Math.min(minGrade, g);
                 maxGrade = Math.max(maxGrade, g);
-                numOfIntegerGrades++;
                 intGrades.add(g);
             }
         }
 
         final String gradeStr;
 
-        if (numOfIntegerGrades == grades.size()) {
+        if (intGrades.size() == grades.size()) {
             // If its 9 - 12, "HS" for High School
             if (minGrade == MIN_HIGH_SCHOOL_GRADE && maxGrade == MAX_HIGH_SCHOOL_GRADE && grades.size() == HIGH_SCHOOL_GRADE_RANGE_LENGTH) {
                 gradeStr = HIGH_SCHOOL_GRADE_STRING;
-            } else if (maxGrade - minGrade + 1 == numOfIntegerGrades) {
+            } else if (maxGrade - minGrade + 1 == intGrades.size()) {
                 gradeStr = minGrade + "-" + maxGrade;
             } else {
                 gradeStr = StringUtils.join(intGrades, ", ");
