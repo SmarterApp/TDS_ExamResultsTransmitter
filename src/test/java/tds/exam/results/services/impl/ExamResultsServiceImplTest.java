@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -95,6 +96,8 @@ public class ExamResultsServiceImplTest {
             .map(examItem -> new Item(examItem.getItemKey()))
             .collect(Collectors.toList());
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
+        assessment.setAcademicYear("2017");
+        assessment.setGrades(Arrays.asList("7", "8"));
 
         when(mockExamService.findExpandableExam(exam.getId())).thenReturn(expandableExam);
         when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
