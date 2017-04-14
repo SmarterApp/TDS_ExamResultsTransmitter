@@ -9,6 +9,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String sessionUrl = "";
     private String examUrl = "";
     private String assessmentUrl = "";
+    private boolean validateTrtXml = false;
 
     /**
      * Get the URL for the session microservice.
@@ -58,5 +59,16 @@ public class ExamResultsTransmitterServiceProperties {
         } else {
             return url;
         }
+    }
+
+    /**
+     * @return {@code true} to validate XML
+     */
+    public boolean isValidateTrtXml() {
+        return validateTrtXml;
+    }
+
+    public void setValidateTrtXml(final boolean validateTrtXml) {
+        this.validateTrtXml = validateTrtXml;
     }
 }
