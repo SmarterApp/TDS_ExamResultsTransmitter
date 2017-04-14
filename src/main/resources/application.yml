@@ -1,19 +1,26 @@
+#Configure the Spring Actuator endpoints to require an authenticated user with the MANAGEMENT role
+management:
+  security:
+    roles: MANAGEMENT
+
+---
+spring:
+  profiles: local-development
+  #Port defined in TDS_Build:docker-compose.yml
+  rabbitmq:
+    port: 32846
+
 server:
   port: 8089
   undertow:
     buffer-size: 16384
-    buffers-per-region: 20
     io-threads: 64
     worker-threads: 512
     direct-buffers: true
-
-#Port defined in TDS_Build:docker-compose.yml
-  rabbitmq:
-    port: 32846
 
 #Ports defined in TDS_Build:docker-compose.yml
 exam-results-transmitter-service:
   session-url: http://localhost:32842
   assessment-url: http://localhost:32841
-  exam-url: http://localhost:8081
+  exam-url: http://localhost:80
   validate-trt-xml: false
