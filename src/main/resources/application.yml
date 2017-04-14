@@ -7,6 +7,10 @@ server:
     worker-threads: 512
     direct-buffers: true
 
+#Port defined in TDS_Build:docker-compose.yml
+  rabbitmq:
+    port: 32846
+
 #Ports defined in TDS_Build:docker-compose.yml
 exam-results-transmitter-service:
   session-url: http://localhost:32842
