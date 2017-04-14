@@ -215,6 +215,9 @@
 				<configuration>
 					<!-- The package of your generated sources -->
 					<packageName>tds.exam.results.trt</packageName>
+                    <sources>
+                        <source>src/main/resources/xsd</source>
+                    </sources>
 				</configuration>
 			</plugin>
 		</plugins>
