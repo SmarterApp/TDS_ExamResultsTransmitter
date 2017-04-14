@@ -1,12 +1,5 @@
 package tds.exam.results.mappers;
 
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import tds.assessment.Assessment;
 import tds.assessment.Item;
 import tds.exam.Exam;
@@ -22,6 +15,11 @@ import tds.exam.results.mappers.utils.JaxbMapperUtils;
 import tds.exam.results.trt.ScoreInfoType;
 import tds.exam.results.trt.TDSReport;
 import tds.session.Session;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A class used for mapping a {@link tds.exam.results.trt.TDSReport.Opportunity} object from Exam and Session data
@@ -141,10 +139,7 @@ public class OpportunityMapper {
                     scoreInfo.setScorePoint(scoreString);
                     scoreInfo.setMaxScore(String.valueOf(assessmentItem.getMaxScore()));
                     scoreInfo.setScoreStatus(scoreStatus);
-
-                    if (score.getScoringDimensions().isPresent()) {
-                        scoreInfo.setScoreDimension(score.getScoringDimensions().get());
-                    }
+                    scoreInfo.setScoreDimension(score.getScoringDimensions());
 
                     opportunityItem.setScoreInfo(scoreInfo);
                     opportunityItem.setScore(scoreString);

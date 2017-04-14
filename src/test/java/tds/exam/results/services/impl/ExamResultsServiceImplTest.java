@@ -119,7 +119,7 @@ public class ExamResultsServiceImplTest {
 
     private void mapMockExamPagesAndItems(final List<ExamPage> examPages, final List<ExamItem> examItems) {
         // Mock/map the exam page ids from "ExamItems" to actual ExamPages.
-        for (int i = 0; i < 10; i++) {
+        for (int i = 1; i < 10; i++) {
             ExamPage page = examPages.get(i);
             examPages.set(i, new ExamPage.Builder()
                 .fromExamPage(page)

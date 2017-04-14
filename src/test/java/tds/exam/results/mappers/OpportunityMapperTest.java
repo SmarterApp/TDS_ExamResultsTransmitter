@@ -25,6 +25,7 @@ import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OpportunityMapperTest {
+
     @Test
     public void shouldMapExpandableExamToOpportunity() {
         Session session = random(Session.class);
@@ -108,7 +109,7 @@ public class OpportunityMapperTest {
 
     private void mapMockExamPagesAndItems(final List<ExamPage> examPages, final List<ExamItem> examItems) {
         // Mock/map the exam page ids from "ExamItems" to actual ExamPages.
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i < 5; i++) {
             ExamPage page = examPages.get(i);
             examPages.set(i, new ExamPage.Builder()
                 .fromExamPage(page)
