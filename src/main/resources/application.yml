@@ -9,6 +9,16 @@ spring:
   #Port defined in TDS_Build:docker-compose.yml
   rabbitmq:
     port: 32846
+  datasource:
+    jdbcUrl: ${sbac.jdbc.host}/exam_audit
+    username: ${sbac.jdbc.user}
+    password: ${sbac.jdbc.password}
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  mvc:
+    throw-exception-if-no-handler-found: false
+  resources:
+    add-mappings: false
 
 server:
   port: 8089
