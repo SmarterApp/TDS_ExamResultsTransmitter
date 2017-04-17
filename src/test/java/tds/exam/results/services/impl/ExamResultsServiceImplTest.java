@@ -29,17 +29,19 @@ import tds.exam.ExamineeNote;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
 import tds.exam.results.services.AssessmentService;
+import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
-import tds.exam.results.validation.impl.XSDBackedTDSReportValidator;
 import tds.session.Session;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,9 +61,13 @@ public class ExamResultsServiceImplTest {
     @Mock
     TDSReportValidator mockReportValidator;
 
+    @Mock
+    ExamReportAuditService mockExamReportAuditService;
+
     @Before
     public void setup() throws JAXBException {
-        examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService, mockReportValidator);
+        examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService,
+            mockReportValidator, mockExamReportAuditService);
     }
 
     @Test
@@ -108,6 +114,7 @@ public class ExamResultsServiceImplTest {
         verify(mockExamService).findExpandableExam(exam.getId());
         verify(mockAssessmentService).findAssessment(exam.getClientName(), exam.getAssessmentKey());
         verify(mockSessionService).findSessionById(exam.getSessionId());
+        verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), any());
 
         // NOTE: Actual mapping logic unit test coverage will be in each individual Mapper class
         assertThat(report).isNotNull();
