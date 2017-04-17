@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.util.UUID;
@@ -18,7 +17,6 @@ import tds.exam.results.trt.TDSReport;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamReportAuditServiceImplTest {
@@ -28,15 +26,11 @@ public class ExamReportAuditServiceImplTest {
     private ExamReportAuditRepository mockExamReportAuditRepository;
 
     @Mock
-    private JAXBContext jaxbContext;
-
-    @Mock
     private Marshaller mockMarshaller;
 
     @Before
     public void setUp() throws JAXBException {
-        when(jaxbContext.createMarshaller()).thenReturn(mockMarshaller);
-        examReportAuditService = new ExamReportAuditServiceImpl(mockExamReportAuditRepository, jaxbContext);
+        examReportAuditService = new ExamReportAuditServiceImpl(mockExamReportAuditRepository, mockMarshaller);
     }
 
     @Test

@@ -32,4 +32,9 @@ public class ExamResultsTransmitterApplicationConfiguration {
         marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         return contextObj;
     }
+
+    @Bean
+    public Marshaller jaxbMarshaller(final JAXBContext jaxbContext) throws JAXBException {
+        return jaxbContext.createMarshaller();
+    }
 }

@@ -14,5 +14,5 @@ CREATE TABLE exam_report (
   exam_id CHAR(36) NOT NULL,
   report TEXT NOT NULL,
   created_at TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
-  KEY `ix_exam_report_id` (id, exam_id)
+  KEY `ix_exam_report_id` (id)
 );

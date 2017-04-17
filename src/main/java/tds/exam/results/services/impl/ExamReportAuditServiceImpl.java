@@ -20,9 +20,9 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
 
     @Autowired
     public ExamReportAuditServiceImpl(final ExamReportAuditRepository examReportAuditRepository,
-                                      final JAXBContext jaxbContext) throws JAXBException {
+                                      final Marshaller jaxbMarshaller) {
         this.examReportAuditRepository = examReportAuditRepository;
-        jaxbMarshaller = jaxbContext.createMarshaller();
+        this.jaxbMarshaller = jaxbMarshaller;
     }
 
     @Override
