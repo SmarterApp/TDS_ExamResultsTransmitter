@@ -20,6 +20,12 @@ spring:
   resources:
     add-mappings: false
 
+flyway:
+  enabled: true
+  url: ${sbac.jdbc.host}/exam_audit
+  user: ${sbac.jdbc.user}
+  password: ${sbac.jdbc.password}
+
 server:
   port: 8089
   undertow:

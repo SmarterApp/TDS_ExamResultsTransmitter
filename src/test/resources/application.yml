@@ -2,7 +2,7 @@ spring:
   datasource:
     jdbcUrl: ${sbac.jdbc.host}/exam_audit
     username: ${sbac.jdbc.user}
-    password: password123
+    password: ${sbac.jdbc.password}
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   mvc:
@@ -13,7 +13,6 @@ spring:
 server:
   undertow:
     buffer-size: 16384
-    buffers-per-region: 20
     io-threads: 64
     worker-threads: 512
     direct-buffers: true
