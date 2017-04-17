@@ -30,5 +30,4 @@ public class ExamCompletedMessageListenerTest {
         listener.handleMessage(examId.toString());
         verify(mockExamResultsService).findExamResults(examId);
     }
-
 }
