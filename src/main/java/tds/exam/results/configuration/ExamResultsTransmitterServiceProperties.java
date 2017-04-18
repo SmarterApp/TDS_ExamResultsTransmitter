@@ -9,7 +9,9 @@ public class ExamResultsTransmitterServiceProperties {
     private String sessionUrl = "";
     private String examUrl = "";
     private String assessmentUrl = "";
+    private String tisUrl = "";
     private boolean validateTrtXml = false;
+    private boolean sendToTis = false;
 
     /**
      * Get the URL for the session microservice.
@@ -53,6 +55,19 @@ public class ExamResultsTransmitterServiceProperties {
         this.assessmentUrl = removeTrailingSlash(assessmentUrl);
     }
 
+    /**
+     * Gets the URL for the Test Integration System
+     *
+     * @return the TIS url
+     */
+    public String getTisUrl() {
+        return tisUrl;
+    }
+
+    public void setTisUrl(final String tisUrl) {
+        this.tisUrl = tisUrl;
+    }
+
     private String removeTrailingSlash(String url) {
         if (url.endsWith("/")) {
             return url.substring(0, url.length() - 1);
@@ -70,5 +85,16 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setValidateTrtXml(final boolean validateTrtXml) {
         this.validateTrtXml = validateTrtXml;
+    }
+
+    /**
+     * @return {@code true} to send to TIS
+     */
+    public boolean isSendToTis() {
+        return sendToTis;
+    }
+
+    public void setSendToTis(boolean sendToTis) {
+        this.sendToTis = sendToTis;
     }
 }

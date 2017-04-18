@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.trt.TDSReport;
 
@@ -35,8 +36,6 @@ public class ExamCompletedMessageListener {
      */
     public void handleMessage(final String examId) {
         LOG.debug("Received completed exam notification for id: {}", examId);
-        final TDSReport report = examResultsService.findExamResults(UUID.fromString(examId));
-
-        //TODO ship the report somewhere
+        examResultsService.findAndSendExamResults(UUID.fromString(examId));
     }
 }

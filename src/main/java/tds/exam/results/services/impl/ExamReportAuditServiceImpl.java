@@ -26,10 +26,16 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final TDSReport report) throws JAXBException {
+    public void insertExamReport(final UUID examId, final TDSReport report) {
         final StringWriter sw = new StringWriter();
-        jaxbMarshaller.marshal(report, sw);
-        final String reportXml = sw.toString();
-        examReportAuditRepository.insertExamReport(examId, reportXml);
+
+        try {
+            jaxbMarshaller.marshal(report, sw);
+            final String reportXml = sw.toString();
+            examReportAuditRepository.insertExamReport(examId, reportXml);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
