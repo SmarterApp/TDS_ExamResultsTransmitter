@@ -4,7 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.xml.bind.JAXBException;
+
 import tds.exam.results.services.ExamResultsService;
+import tds.exam.results.services.TestIntegrationSystemService;
 import tds.exam.results.trt.TDSReport;
 
 import java.util.UUID;
@@ -17,10 +21,13 @@ public class ExamCompletedMessageListener {
     private final static Logger LOG = LoggerFactory.getLogger(ExamCompletedMessageListener.class);
 
     private final ExamResultsService examResultsService;
+    private final TestIntegrationSystemService testIntegrationSystemService;
 
     @Autowired
-    public ExamCompletedMessageListener(final ExamResultsService examResultsService) {
+    public ExamCompletedMessageListener(final ExamResultsService examResultsService,
+                                        final TestIntegrationSystemService testIntegrationSystemService) {
         this.examResultsService = examResultsService;
+        this.testIntegrationSystemService = testIntegrationSystemService;
     }
 
     /**
@@ -37,6 +44,10 @@ public class ExamCompletedMessageListener {
         LOG.debug("Received completed exam notification for id: {}", examId);
         final TDSReport report = examResultsService.findExamResults(UUID.fromString(examId));
 
-        //TODO ship the report somewhere
+        try {
+            testIntegrationSystemService.sendResults(UUID.fromString(examId), report);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

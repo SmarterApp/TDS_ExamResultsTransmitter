@@ -50,19 +50,19 @@ public class ExamResultsServiceImplTest {
     private ExamResultsService examResultsService;
 
     @Mock
-    ExamService mockExamService;
+    private ExamService mockExamService;
 
     @Mock
-    AssessmentService mockAssessmentService;
+    private AssessmentService mockAssessmentService;
 
     @Mock
-    SessionService mockSessionService;
+    private SessionService mockSessionService;
 
     @Mock
-    TDSReportValidator mockReportValidator;
+    private TDSReportValidator mockReportValidator;
 
     @Mock
-    ExamReportAuditService mockExamReportAuditService;
+    private ExamReportAuditService mockExamReportAuditService;
 
     @Before
     public void setup() throws JAXBException {

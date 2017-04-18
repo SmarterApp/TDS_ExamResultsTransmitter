@@ -9,6 +9,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String sessionUrl = "";
     private String examUrl = "";
     private String assessmentUrl = "";
+    private String tisUrl = "";
     private boolean validateTrtXml = false;
 
     /**
@@ -51,6 +52,19 @@ public class ExamResultsTransmitterServiceProperties {
     public void setAssessmentUrl(final String assessmentUrl) {
         if (assessmentUrl == null) throw new IllegalArgumentException("asssessmentUrl cannot be null");
         this.assessmentUrl = removeTrailingSlash(assessmentUrl);
+    }
+
+    /**
+     * Gets the URL for the Test Integration System
+     *
+     * @return the TIS url
+     */
+    public String getTisUrl() {
+        return tisUrl;
+    }
+
+    public void setTisUrl(final String tisUrl) {
+        this.tisUrl = tisUrl;
     }
 
     private String removeTrailingSlash(String url) {
