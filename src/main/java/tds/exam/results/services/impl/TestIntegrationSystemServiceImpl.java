@@ -25,10 +25,15 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
     }
 
     @Override
-    public void sendResults(final UUID examId, final TDSReport report) throws JAXBException {
+    public void sendResults(final UUID examId, final TDSReport report) {
         final StringWriter sw = new StringWriter();
-        jaxbMarshaller.marshal(report, sw);
-        final String reportXml = sw.toString();
-        testIntegrationSystemRepository.sendResults(examId, reportXml);
+        try {
+            jaxbMarshaller.marshal(report, sw);
+            final String reportXml = sw.toString();
+            testIntegrationSystemRepository.sendResults(examId, reportXml);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

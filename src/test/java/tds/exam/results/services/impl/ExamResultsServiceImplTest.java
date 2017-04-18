@@ -33,6 +33,7 @@ import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
+import tds.exam.results.services.TestIntegrationSystemService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.Session;
@@ -64,10 +65,13 @@ public class ExamResultsServiceImplTest {
     @Mock
     private ExamReportAuditService mockExamReportAuditService;
 
+    @Mock
+    private TestIntegrationSystemService mockTestIntegrationSystemService;
+
     @Before
     public void setup() throws JAXBException {
         examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService,
-            mockReportValidator, mockExamReportAuditService);
+            mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService);
     }
 
     @Test
@@ -109,13 +113,13 @@ public class ExamResultsServiceImplTest {
         when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
         when(mockSessionService.findSessionById(exam.getSessionId())).thenReturn(session);
 
-        TDSReport report = examResultsService.findExamResults(expandableExam.getExam().getId());
+        TDSReport report = examResultsService.findAndSendExamResults(expandableExam.getExam().getId());
 
         verify(mockExamService).findExpandableExam(exam.getId());
         verify(mockAssessmentService).findAssessment(exam.getClientName(), exam.getAssessmentKey());
         verify(mockSessionService).findSessionById(exam.getSessionId());
         verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), any());
-
+        verify(mockTestIntegrationSystemService).sendResults(eq(exam.getId()), any());
         // NOTE: Actual mapping logic unit test coverage will be in each individual Mapper class
         assertThat(report).isNotNull();
         assertThat(report.getTest()).isNotNull();

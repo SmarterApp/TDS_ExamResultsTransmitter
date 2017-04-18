@@ -16,5 +16,5 @@ public interface TestIntegrationSystemService {
      * @param report The {@link tds.exam.results.trt.TDSReport} TRT jaxb object
      * @throws JAXBException if an error occurs while marshalling the report
      */
-    void sendResults(final UUID examId, final TDSReport report) throws JAXBException;
+    void sendResults(final UUID examId, final TDSReport report);
 }

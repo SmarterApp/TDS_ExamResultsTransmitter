@@ -11,6 +11,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String assessmentUrl = "";
     private String tisUrl = "";
     private boolean validateTrtXml = false;
+    private boolean sendToTis = false;
 
     /**
      * Get the URL for the session microservice.
@@ -84,5 +85,16 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setValidateTrtXml(final boolean validateTrtXml) {
         this.validateTrtXml = validateTrtXml;
+    }
+
+    /**
+     * @return {@code true} to send to TIS
+     */
+    public boolean isSendToTis() {
+        return sendToTis;
+    }
+
+    public void setSendToTis(boolean sendToTis) {
+        this.sendToTis = sendToTis;
     }
 }

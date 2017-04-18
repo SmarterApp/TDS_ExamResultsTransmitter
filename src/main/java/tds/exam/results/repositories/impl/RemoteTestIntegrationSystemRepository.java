@@ -1,5 +1,7 @@
 package tds.exam.results.repositories.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,7 @@ import tds.exam.results.repositories.TestIntegrationSystemRepository;
 
 @Repository
 public class RemoteTestIntegrationSystemRepository implements TestIntegrationSystemRepository {
+    private static final Logger log = LoggerFactory.getLogger(RemoteTestIntegrationSystemRepository.class);
     private final RestTemplate restTemplate;
     private final ExamResultsTransmitterServiceProperties properties;
 
@@ -28,6 +31,11 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
 
     @Override
     public void sendResults(final UUID examId, final String results) {
+        if (properties.isSendToTis()) {
+            log.info("TIS XML not sent: " + results);
+            return;
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         HttpEntity<?> requestHttpEntity = new HttpEntity<>(results, headers);
