@@ -16,5 +16,5 @@ public interface ExamReportAuditService {
      * @param report The {@link tds.exam.results.trt.TDSReport} TRT jaxb object
      * @throws JAXBException
      */
-    void insertExamReport(final UUID examId, final TDSReport report) throws JAXBException;
+    void insertExamReport(final UUID examId, final TDSReport report);
 }

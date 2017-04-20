@@ -18,6 +18,7 @@ import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
+import tds.exam.results.services.TestIntegrationSystemService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.Session;
@@ -29,22 +30,25 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     private final AssessmentService assessmentService;
     private final TDSReportValidator tdsReportValidator;
     private final ExamReportAuditService examReportAuditService;
+    private final TestIntegrationSystemService testIntegrationSystemService;
 
     @Autowired
     public ExamResultsServiceImpl(final ExamService examService,
                                   final SessionService sessionService,
                                   final AssessmentService assessmentService,
                                   final TDSReportValidator tdsReportValidator,
-                                  final ExamReportAuditService examReportAuditService) {
+                                  final ExamReportAuditService examReportAuditService,
+                                  final TestIntegrationSystemService testIntegrationSystemService) {
         this.examService = examService;
         this.sessionService = sessionService;
         this.assessmentService = assessmentService;
         this.tdsReportValidator = tdsReportValidator;
         this.examReportAuditService = examReportAuditService;
+        this.testIntegrationSystemService = testIntegrationSystemService;
     }
 
     @Override
-    public TDSReport findExamResults(final UUID examId) {
+    public TDSReport findAndSendExamResults(final UUID examId) {
         TDSReport report = new TDSReport();
         final ExpandableExam expandableExam = examService.findExpandableExam(examId);
         final Exam exam = expandableExam.getExam();
@@ -57,12 +61,8 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         CommentMapper.mapComments(report.getComment(), expandableExam);
 
         tdsReportValidator.validateReport(report);
-
-        try {
-            examReportAuditService.insertExamReport(examId, report);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
+        testIntegrationSystemService.sendResults(examId, report);
+        examReportAuditService.insertExamReport(examId, report);
 
         return report;
     }
