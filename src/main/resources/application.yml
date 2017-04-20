@@ -40,7 +40,7 @@ exam-results-transmitter-service:
   assessment-url: http://localhost:32841
   exam-url: http://localhost:80
   tis-url: ${sbac.tis.url}
-  tis-callback-url: ${sbac.tis.url}/tisReply
+  tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
   send-to-tis: false
 
