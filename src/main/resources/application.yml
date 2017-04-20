@@ -39,4 +39,15 @@ exam-results-transmitter-service:
   session-url: http://localhost:32842
   assessment-url: http://localhost:32841
   exam-url: http://localhost:80
+  tis-url: ${sbac.tis.url}
+  tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
+  send-to-tis: false
+
+oauth:
+  tis-client-id: ${oauth.tis.client.id}
+  tis-client-secret: ${oauth.tis.client.secret}
+  tis-username: ${oauth.tis.username}
+  tis-password: ${oauth.tis.password}
+  access-url: ${oauth.access.url}
+
