@@ -45,9 +45,9 @@ exam-results-transmitter-service:
   send-to-tis: false
 
 oauth:
-  tis:
-    client.id: ${oauth.tis.client.id}
-    client.secret: ${oauth.tis.client.secret}
-    username: ${oauth.tis.username}
-    password: ${oauth.tis.password}
-  access.url: ${oauth.access.url}
+  tis-client-id: ${oauth.tis.client.id}
+  tis-client-secret: ${oauth.tis.client.secret}
+  tis-username: ${oauth.tis.username}
+  tis-password: ${oauth.tis.password}
+  access-url: ${oauth.access.url}
+
