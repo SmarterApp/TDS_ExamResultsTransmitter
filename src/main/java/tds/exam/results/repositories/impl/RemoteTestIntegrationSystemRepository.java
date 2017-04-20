@@ -42,15 +42,10 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/api/testresult", properties.getTisUrl()))
             .queryParam("statusCallback", properties.getTisCallbackUrl());
 
-        try {
-            restTemplate.exchange(
-                builder.build().toUri(),
-                HttpMethod.POST,
-                requestHttpEntity,
-                String.class);
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-        }
-
+        restTemplate.exchange(
+            builder.build().toUri(),
+            HttpMethod.POST,
+            requestHttpEntity,
+            String.class);
     }
 }
