@@ -25,6 +25,7 @@
         <integration-tests.skip>true</integration-tests.skip>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
         <jaxb-maven.version>2.3.1</jaxb-maven.version>
+        <spring.security.oauth.version>2.1.0.RELEASE</spring.security.oauth.version>
 
         <!-- TDS Version Props -->
         <tds-common.version>0.0.10</tds-common.version>
@@ -81,6 +82,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>${spring.security.oauth.version}</version>
         </dependency>
 
         <dependency>

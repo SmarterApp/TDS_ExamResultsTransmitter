@@ -10,6 +10,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String examUrl = "";
     private String assessmentUrl = "";
     private String tisUrl = "";
+    private String tisCallbackUrl = "";
     private boolean validateTrtXml = false;
     private boolean sendToTis = false;
 
@@ -66,6 +67,19 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setTisUrl(final String tisUrl) {
         this.tisUrl = tisUrl;
+    }
+
+    /**
+     * Gets the callback url for the Test Integration System
+     *
+     * @return the TIS callback URL
+     */
+    public String getTisCallbackUrl() {
+        return tisCallbackUrl;
+    }
+
+    public void setTisCallbackUrl(final String tisCallbackUrl) {
+        this.tisCallbackUrl = tisCallbackUrl;
     }
 
     private String removeTrailingSlash(String url) {

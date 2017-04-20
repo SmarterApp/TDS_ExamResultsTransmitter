@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -16,6 +17,7 @@ import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.repositories.TestIntegrationSystemRepository;
 
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +26,7 @@ public class RemoteTestIntegrationSystemRepositoryTest {
     private TestIntegrationSystemRepository testIntegrationSystemRepository;
 
     @Mock
-    private RestTemplate mockRestTemplate;
+    private OAuth2RestOperations mockRestTemplate;
 
     @Mock
     private ExamResultsTransmitterServiceProperties mockProperties;
@@ -40,8 +42,21 @@ public class RemoteTestIntegrationSystemRepositoryTest {
         final String results = "TestResults";
 
         when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
+        when(mockProperties.isSendToTis()).thenReturn(true);
         testIntegrationSystemRepository.sendResults(examId, results);
 
         verify(mockRestTemplate).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
+    }
+
+    @Test
+    public void shouldNotSendResultsToTis() {
+        final UUID examId = UUID.randomUUID();
+        final String results = "TestResults";
+
+        when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
+        when(mockProperties.isSendToTis()).thenReturn(false);
+        testIntegrationSystemRepository.sendResults(examId, results);
+
+        verify(mockRestTemplate, never()).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
     }
 }
