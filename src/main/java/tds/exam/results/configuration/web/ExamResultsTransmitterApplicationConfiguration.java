@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import tds.common.configuration.CacheConfiguration;
+import tds.common.configuration.DataSourceConfiguration;
 import tds.common.configuration.RestTemplateConfiguration;
 import tds.common.configuration.SecurityConfiguration;
 import tds.exam.results.trt.TDSReport;
@@ -20,7 +21,8 @@ import tds.exam.results.trt.TDSReport;
 @Import({
     CacheConfiguration.class,
     RestTemplateConfiguration.class,
-    SecurityConfiguration.class
+    SecurityConfiguration.class,
+    DataSourceConfiguration.class
 })
 public class ExamResultsTransmitterApplicationConfiguration {
     @Bean
@@ -29,5 +31,10 @@ public class ExamResultsTransmitterApplicationConfiguration {
         Marshaller marshallerObj = contextObj.createMarshaller();
         marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         return contextObj;
+    }
+
+    @Bean
+    public Marshaller jaxbMarshaller(final JAXBContext jaxbContext) throws JAXBException {
+        return jaxbContext.createMarshaller();
     }
 }

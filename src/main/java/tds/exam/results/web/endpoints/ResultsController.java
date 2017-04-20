@@ -29,6 +29,6 @@ public class ResultsController {
     @GetMapping(value = "/{examId}", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public TDSReport findExamResults(@PathVariable final UUID examId) throws JAXBException, IOException, SAXException {
-        return examResultsService.findExamResults(examId);
+        return examResultsService.findAndSendExamResults(examId);
     }
 }

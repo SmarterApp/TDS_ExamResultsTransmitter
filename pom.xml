@@ -28,7 +28,7 @@
 
         <!-- TDS Version Props -->
         <tds-common.version>0.0.10</tds-common.version>
-        <tds-exam-client.version>0.0.9</tds-exam-client.version>
+        <tds-exam-client.version>0.0.12</tds-exam-client.version>
         <tds-session-client.version>0.0.4</tds-session-client.version>
         <tds-assessment-client.version>0.0.9</tds-assessment-client.version>
     </properties>
@@ -82,10 +82,32 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- Database/data access dependencies -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+            <version>5.1.39</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>4.0.3</version>
         </dependency>
 
         <!-- Testing -->
@@ -118,6 +140,41 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>migrate-db</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>4.0.3</version>
+                        <executions>
+                            <execution>
+                                <id>flyway_migrations</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>${mysql.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -217,6 +274,7 @@
         <url>https://github.com/SmarterApp/TDS_ExamResultsTransmitter</url>
         <tag>HEAD</tag>
     </scm>
+
 
     <distributionManagement>
         <repository>

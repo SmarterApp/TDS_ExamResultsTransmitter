@@ -30,7 +30,9 @@ public class TestMapper {
             .findFirst().get();
 
         test.setBankKey(bankKey);
-        test.setHandScoreProject(Long.valueOf(assessment.getHandScoreProjectId()));
+        test.setHandScoreProject(assessment.getHandScoreProjectId() != null
+            ? Long.valueOf(assessment.getHandScoreProjectId())
+            : null);
         test.setContract(assessment.getContract());
         test.setMode(TEST_MODE_ONLINE);
         test.setGrade(createGradeStringFromGrades(assessment.getGrades()));
