@@ -10,6 +10,7 @@ import javax.xml.bind.Marshaller;
 
 import tds.common.configuration.CacheConfiguration;
 import tds.common.configuration.DataSourceConfiguration;
+import tds.common.configuration.EventLoggerConfiguration;
 import tds.common.configuration.RestTemplateConfiguration;
 import tds.common.configuration.SecurityConfiguration;
 import tds.exam.results.trt.TDSReport;
@@ -22,7 +23,8 @@ import tds.exam.results.trt.TDSReport;
     CacheConfiguration.class,
     RestTemplateConfiguration.class,
     SecurityConfiguration.class,
-    DataSourceConfiguration.class
+    DataSourceConfiguration.class,
+    EventLoggerConfiguration.class,
 })
 public class ExamResultsTransmitterApplicationConfiguration {
     @Bean
