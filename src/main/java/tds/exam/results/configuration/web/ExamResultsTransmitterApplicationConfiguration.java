@@ -24,7 +24,7 @@ import tds.exam.results.trt.TDSReport;
     RestTemplateConfiguration.class,
     SecurityConfiguration.class,
     DataSourceConfiguration.class,
-    EventLoggerConfiguration.class,
+    EventLoggerConfiguration.class
 })
 public class ExamResultsTransmitterApplicationConfiguration {
     @Bean
