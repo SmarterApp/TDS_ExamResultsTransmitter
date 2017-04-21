@@ -11,6 +11,7 @@ import javax.xml.bind.Marshaller;
 import tds.common.configuration.CacheConfiguration;
 import tds.common.configuration.DataSourceConfiguration;
 import tds.common.configuration.EventLoggerConfiguration;
+import tds.common.configuration.RedisClusterConfiguration;
 import tds.common.configuration.RestTemplateConfiguration;
 import tds.common.configuration.SecurityConfiguration;
 import tds.exam.results.trt.TDSReport;
@@ -20,8 +21,9 @@ import tds.exam.results.trt.TDSReport;
  */
 @Configuration
 @Import({
-    CacheConfiguration.class,
     RestTemplateConfiguration.class,
+    RedisClusterConfiguration.class,
+    CacheConfiguration.class,
     SecurityConfiguration.class,
     DataSourceConfiguration.class,
     EventLoggerConfiguration.class
