@@ -26,7 +26,7 @@
         <jaxb-maven.version>2.3.1</jaxb-maven.version>
 
         <!-- TDS Version Props -->
-        <tds-common.version>0.0.14</tds-common.version>
+        <tds-common.version>0.0.15-SNAPSHOT</tds-common.version>
         <tds-exam-client.version>0.0.12</tds-exam-client.version>
         <tds-session-client.version>0.0.4</tds-session-client.version>
         <tds-assessment-client.version>0.0.9</tds-assessment-client.version>
