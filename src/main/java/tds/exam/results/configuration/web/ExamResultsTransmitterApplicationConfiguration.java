@@ -14,6 +14,7 @@ import tds.common.configuration.EventLoggerConfiguration;
 import tds.common.configuration.RedisClusterConfiguration;
 import tds.common.configuration.RestTemplateConfiguration;
 import tds.common.configuration.SecurityConfiguration;
+import tds.common.web.advice.ExceptionAdvice;
 import tds.exam.results.trt.TDSReport;
 
 /**
@@ -26,7 +27,8 @@ import tds.exam.results.trt.TDSReport;
     CacheConfiguration.class,
     SecurityConfiguration.class,
     DataSourceConfiguration.class,
-    EventLoggerConfiguration.class
+    EventLoggerConfiguration.class,
+    ExceptionAdvice.class
 })
 public class ExamResultsTransmitterApplicationConfiguration {
     @Bean

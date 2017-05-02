@@ -27,7 +27,7 @@
 
         <!-- TDS Version Props -->
         <tds-common.version>0.0.15</tds-common.version>
-        <tds-exam-client.version>0.0.15-SNAPSHOT</tds-exam-client.version>
+        <tds-exam-client.version>0.0.15</tds-exam-client.version>
         <tds-session-client.version>0.0.4</tds-session-client.version>
         <tds-assessment-client.version>0.0.9</tds-assessment-client.version>
     </properties>

@@ -122,6 +122,7 @@ public class OpportunityMapperTest {
                 .withExamPageId(examPages.get(i).getId())
                 .withItemType(random(String.class))
                 .withResponse(random(ExamItemResponse.class))
+                .withItemFilePath("/path/to/file/")
                 .build();
 
             examItems.add(examItem);

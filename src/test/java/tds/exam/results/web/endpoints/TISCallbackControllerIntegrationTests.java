@@ -21,6 +21,8 @@ import tds.common.web.advice.ExceptionAdvice;
 import tds.exam.results.services.MessagingService;
 import tds.exam.results.tis.TISState;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +39,7 @@ public class TISCallbackControllerIntegrationTests {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MessagingService messagingService;
+    private MessagingService mockMessagingService;
 
     private ObjectWriter ow;
 
@@ -52,13 +54,14 @@ public class TISCallbackControllerIntegrationTests {
             .withExamId(UUID.randomUUID().toString())
             .withSuccess(true)
             .build();
+        final UUID examId = UUID.fromString(tisState.getExamId());
 
         http.perform(post(new URI("/tis"))
             .contentType(MediaType.APPLICATION_JSON)
             .content(ow.writeValueAsString(tisState)))
             .andExpect(status().isOk());
 
-        verify(messagingService).sendReportAcknowledgement(tisState);
+        verify(mockMessagingService).sendReportAcknowledgement(eq(examId), isA(TISState.class));
     }
 
 
@@ -74,6 +77,6 @@ public class TISCallbackControllerIntegrationTests {
             .content(ow.writeValueAsString(tisState)))
             .andExpect(status().isBadRequest());
 
-        verify(messagingService, never()).sendReportAcknowledgement(tisState);
+        verify(mockMessagingService, never()).sendReportAcknowledgement(isA(UUID.class), eq(tisState));
     }
 }

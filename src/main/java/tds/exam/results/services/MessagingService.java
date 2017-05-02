@@ -1,5 +1,7 @@
 package tds.exam.results.services;
 
+import java.util.UUID;
+
 import tds.exam.results.tis.TISState;
 
 /**
@@ -9,7 +11,8 @@ public interface MessagingService {
     /**
      * Sends a message to the exam report queue acknowledging that a response was received from TIS
      *
-     * @param state The TIS response object
+     * @param examId The id of the exam to report
+     * @param state  The TIS response object
      */
-    void sendReportAcknowledgement(final TISState state);
+    void sendReportAcknowledgement(final UUID examId, final TISState state);
 }

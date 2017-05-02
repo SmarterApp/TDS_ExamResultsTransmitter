@@ -25,11 +25,11 @@ public class MessagingServiceImplTest {
     private MessagingService messagingService;
 
     @Mock
-    private RabbitTemplate rabbitTemplate;
+    private RabbitTemplate mockRabbitTemplate;
 
     @Before
     public void setup() {
-        messagingService = new MessagingServiceImpl(rabbitTemplate);
+        messagingService = new MessagingServiceImpl(mockRabbitTemplate);
     }
 
     @Test
@@ -38,9 +38,10 @@ public class MessagingServiceImplTest {
             .withExamId(UUID.randomUUID().toString())
             .withSuccess(true)
             .build();
+        final UUID examId = UUID.fromString(tisState.getExamId());
 
-        messagingService.sendReportAcknowledgement(tisState);
-        verify(rabbitTemplate).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        messagingService.sendReportAcknowledgement(examId, tisState);
+        verify(mockRabbitTemplate).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
     }
 
     @Test
@@ -49,9 +50,10 @@ public class MessagingServiceImplTest {
             .withExamId(UUID.randomUUID().toString())
             .withSuccess(false)
             .build();
+        final UUID examId = UUID.fromString(tisState.getExamId());
 
-        messagingService.sendReportAcknowledgement(tisState);
-        verify(rabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        messagingService.sendReportAcknowledgement(examId, tisState);
+        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
     }
 
     @Test
@@ -61,8 +63,9 @@ public class MessagingServiceImplTest {
             .withSuccess(true)
             .withError("Whoopsies!")
             .build();
+        final UUID examId = UUID.fromString(tisState.getExamId());
 
-        messagingService.sendReportAcknowledgement(tisState);
-        verify(rabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        messagingService.sendReportAcknowledgement(examId, tisState);
+        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
     }
 }
