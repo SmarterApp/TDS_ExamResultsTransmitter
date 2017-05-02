@@ -1,22 +1,18 @@
 package tds.exam.results.configuration.messaging;
 
-import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tds.exam.ExamTopics;
+
 import tds.exam.results.messaging.ExamCompletedMessageListener;
 
-import static org.springframework.amqp.core.AcknowledgeMode.MANUAL;
 import static tds.exam.ExamTopics.TOPIC_EXAM_COMPLETED;
 import static tds.exam.ExamTopics.TOPIC_EXCHANGE;
 
