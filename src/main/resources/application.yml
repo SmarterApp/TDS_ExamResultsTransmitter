@@ -50,6 +50,7 @@ exam-results-transmitter-service:
   tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
   send-to-tis: false
+  retry-on-error: false
 
 oauth:
   tis-client-id: ${oauth.tis.client.id}

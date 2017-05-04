@@ -1,5 +1,7 @@
 package tds.exam.results.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import java.util.UUID;
 import tds.assessment.Assessment;
 import tds.exam.Exam;
 import tds.exam.ExpandableExam;
+import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.mappers.CommentMapper;
 import tds.exam.results.mappers.ExamineeMapper;
 import tds.exam.results.mappers.OpportunityMapper;
@@ -25,12 +28,14 @@ import tds.session.Session;
 
 @Service
 public class ExamResultsServiceImpl implements ExamResultsService {
+    private static final Logger log = LoggerFactory.getLogger(ExamResultsServiceImpl.class);
     private final ExamService examService;
     private final SessionService sessionService;
     private final AssessmentService assessmentService;
     private final TDSReportValidator tdsReportValidator;
     private final ExamReportAuditService examReportAuditService;
     private final TestIntegrationSystemService testIntegrationSystemService;
+    private final ExamResultsTransmitterServiceProperties properties;
 
     @Autowired
     public ExamResultsServiceImpl(final ExamService examService,
@@ -38,7 +43,9 @@ public class ExamResultsServiceImpl implements ExamResultsService {
                                   final AssessmentService assessmentService,
                                   final TDSReportValidator tdsReportValidator,
                                   final ExamReportAuditService examReportAuditService,
-                                  final TestIntegrationSystemService testIntegrationSystemService) {
+                                  final TestIntegrationSystemService testIntegrationSystemService,
+                                  final ExamResultsTransmitterServiceProperties properties) {
+        this.properties = properties;
         this.examService = examService;
         this.sessionService = sessionService;
         this.assessmentService = assessmentService;
@@ -50,6 +57,22 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     @Override
     public TDSReport findAndSendExamResults(final UUID examId) {
         TDSReport report = new TDSReport();
+
+        if (properties.isRetryOnError()) {
+            findAndSendExamResults(examId, report);
+        } else {
+            try {
+                findAndSendExamResults(examId, report);
+            } catch (Exception e) {
+                // Log error, and do not rethrow to prevent ERT from re-processing this same request
+                log.error("Error occurred while processing or sending the exam results for examId {}: " + e.getStackTrace());
+            }
+        }
+
+        return report;
+    }
+
+    private void findAndSendExamResults(final UUID examId, final TDSReport report) {
         final ExpandableExam expandableExam = examService.findExpandableExam(examId);
         final Exam exam = expandableExam.getExam();
         final Session session = sessionService.findSessionById(exam.getSessionId());
@@ -63,7 +86,6 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         tdsReportValidator.validateReport(report);
         testIntegrationSystemService.sendResults(examId, report);
         examReportAuditService.insertExamReport(examId, report);
-
-        return report;
     }
+
 }
