@@ -13,7 +13,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String tisCallbackUrl = "";
     private boolean validateTrtXml = false;
     private boolean sendToTis = false;
-    private boolean retryOnError = false;
+    private boolean retryOnError = true;
 
     /**
      * Get the URL for the session microservice.
