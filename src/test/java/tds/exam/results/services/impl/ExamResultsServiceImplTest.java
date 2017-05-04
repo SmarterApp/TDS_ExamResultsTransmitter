@@ -28,6 +28,7 @@ import tds.exam.ExamineeAttribute;
 import tds.exam.ExamineeNote;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
+import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.services.AssessmentService;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
@@ -68,10 +69,13 @@ public class ExamResultsServiceImplTest {
     @Mock
     private TestIntegrationSystemService mockTestIntegrationSystemService;
 
+    @Mock
+    private ExamResultsTransmitterServiceProperties mockProperties;
+
     @Before
     public void setup() throws JAXBException {
         examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService,
-            mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService);
+            mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService, mockProperties);
     }
 
     @Test

@@ -13,6 +13,7 @@ public class ExamResultsTransmitterServiceProperties {
     private String tisCallbackUrl = "";
     private boolean validateTrtXml = false;
     private boolean sendToTis = false;
+    private boolean retryOnError = false;
 
     /**
      * Get the URL for the session microservice.
@@ -110,5 +111,16 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setSendToTis(boolean sendToTis) {
         this.sendToTis = sendToTis;
+    }
+
+    /**
+     * @return {@code true} to continuously retry on error
+     */
+    public boolean isRetryOnError() {
+        return retryOnError;
+    }
+
+    public void setRetryOnError(final boolean retryOnError) {
+        this.retryOnError = retryOnError;
     }
 }
