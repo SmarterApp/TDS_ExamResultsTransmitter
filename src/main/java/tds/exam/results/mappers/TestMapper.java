@@ -2,6 +2,8 @@ package tds.exam.results.mappers;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import tds.exam.results.trt.TDSReport;
  * A class used for mapping a {@link tds.exam.results.trt.TDSReport.Test} object from {@link tds.assessment.Assessment} data
  */
 public class TestMapper {
+    private final static Logger log = LoggerFactory.getLogger(TestMapper.class);
     private final static String TEST_MODE_ONLINE = "online";
     private static final String HIGH_SCHOOL_GRADE_STRING = "HS";
     private static final int MIN_HIGH_SCHOOL_GRADE = 9;
@@ -37,7 +40,7 @@ public class TestMapper {
         test.setMode(TEST_MODE_ONLINE);
         test.setGrade(createGradeStringFromGrades(assessment.getGrades()));
         test.setAssessmentType(assessment.getType());
-        test.setAcademicYear(parseLatestAcademicYear(assessment.getAcademicYear()));
+        test.setAcademicYear(parseLatestAcademicYear(assessment.getAcademicYear(), assessment.getKey()));
         test.setAssessmentVersion(assessment.getUpdateVersion() == null
             ? String.valueOf(assessment.getLoadVersion())
             : String.valueOf(assessment.getUpdateVersion()));
@@ -54,9 +57,15 @@ public class TestMapper {
     }
 
     /* Rule: If a date range, select the latest year */
-    private static long parseLatestAcademicYear(final String academicYearString) {
+    private static long parseLatestAcademicYear(final String academicYearString, final String key) {
+        if (academicYearString.equals("")) {
+            // If the configs.tbltestadmin table is not configured with an academic year, set this value to 0
+            log.error("The academic year for the assessment was not set in the configuration database for assessment {}. Defaulting to '0'.",
+                key);
+            return 0;
+        }
         // If this is a range date, pick the latest year
-        if (academicYearString.contains("-")) {
+        else if (academicYearString.contains("-")) {
             return Long.parseLong(academicYearString.split("-")[1]);
         }
 

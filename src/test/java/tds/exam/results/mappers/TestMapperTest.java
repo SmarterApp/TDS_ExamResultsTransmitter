@@ -43,6 +43,25 @@ public class TestMapperTest {
     }
 
     @Test
+    public void shouldMapAssessmentToTDSReportTestWithBlankAcademicYear() {
+        Assessment assessment = random(Assessment.class, "segments");
+        Segment segment = random(Segment.class);
+        // Bank key should be 187
+        segment.setItems(Arrays.asList(new Item("187-1234")));
+        assessment.setSegments(Arrays.asList(segment));
+
+        assessment.setGrades(Collections.singletonList("8"));
+        assessment.setAcademicYear("");
+        assessment.setLoadVersion(1234L);
+        assessment.setUpdateVersion(4321L);
+
+        TDSReport.Test reportTest = TestMapper.mapTest(assessment);
+
+        assertThat(reportTest).isNotNull();
+        assertThat(reportTest.getAcademicYear()).isEqualTo(0L);
+    }
+
+    @Test
     public void shouldMapAssessmentToTDSReportTestWithGradeRangeAndNoUpdateVersion() {
         Assessment assessment = random(Assessment.class, "segments");
         Segment segment = random(Segment.class);
