@@ -13,6 +13,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
 
+import tds.common.web.resources.NoContentResponseResource;
+import tds.exam.ExamStatusCode;
+import tds.exam.ExamStatusRequest;
 import tds.exam.ExpandableExam;
 import tds.exam.ExpandableExamAttributes;
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
@@ -59,5 +62,25 @@ public class RemoteExamRepository implements ExamRepository {
             });
 
         return responseEntity.getBody();
+    }
+
+    @Override
+    public void updateStatus(final UUID examId, final String status) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ExamStatusRequest request = new ExamStatusRequest(new ExamStatusCode(status), "ExamResultsTransmitter");
+
+        HttpEntity<?> requestHttpEntity = new HttpEntity<>(request, headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/%s/%s/status",
+          properties.getExamUrl(), EXAM_APP_CONTEXT, examId));
+
+        restTemplate.exchange(
+          builder.build().toUri(),
+          HttpMethod.PUT,
+          requestHttpEntity,
+          new ParameterizedTypeReference<NoContentResponseResource>() {
+          });
     }
 }

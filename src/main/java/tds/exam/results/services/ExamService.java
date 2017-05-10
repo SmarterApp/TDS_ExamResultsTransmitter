@@ -15,4 +15,12 @@ public interface ExamService {
      * @return The fully-populated {@link tds.exam.ExpandableExam}
      */
     ExpandableExam findExpandableExam(final UUID examId);
+
+    /**
+     * Updates the status of an exam
+     *
+     * @param examId the id of the {@link tds.exam.Exam}
+     * @param status the status to update the exam to
+     */
+    void updateStatus(final UUID examId, final String status);
 }

@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.UUID;
+
+import tds.exam.ExamStatusCode;
 import tds.exam.ExpandableExam;
 import tds.exam.results.repositories.ExamRepository;
 import tds.exam.results.services.ExamService;
@@ -36,5 +39,12 @@ public class ExamServiceImplTest {
         verify(mockExamRepository).findExpandableExam(expandableExam.getExam().getId());
 
         assertThat(retExpandableExam).isEqualTo(expandableExam);
+    }
+
+    @Test
+    public void shouldUpdateExamStatus() {
+        UUID examId = UUID.randomUUID();
+        examService.updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
+        verify(mockExamRepository).updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
     }
 }
