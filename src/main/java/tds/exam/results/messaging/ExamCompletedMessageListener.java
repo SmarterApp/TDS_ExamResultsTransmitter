@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import tds.exam.ExamStatusCode;
 import tds.exam.results.services.ExamResultsService;
+import tds.exam.results.services.ExamService;
 import tds.exam.results.trt.TDSReport;
 
 import java.util.UUID;
@@ -19,9 +21,13 @@ public class ExamCompletedMessageListener {
 
     private final ExamResultsService examResultsService;
 
+    private final ExamService examService;
+
     @Autowired
-    public ExamCompletedMessageListener(final ExamResultsService examResultsService) {
+    public ExamCompletedMessageListener(final ExamResultsService examResultsService,
+                                        final ExamService examService) {
         this.examResultsService = examResultsService;
+        this.examService = examService;
     }
 
     /**
@@ -36,6 +42,9 @@ public class ExamCompletedMessageListener {
      */
     public void handleMessage(final String examId) {
         LOG.debug("Received completed exam notification for id: {}", examId);
-        examResultsService.findAndSendExamResults(UUID.fromString(examId));
+        // Once this ERT message has been received, the exam status is "submitted"
+        UUID id = UUID.fromString(examId);
+        examService.updateStatus(id, ExamStatusCode.STATUS_SUBMITTED);
+        examResultsService.findAndSendExamResults(id);
     }
 }

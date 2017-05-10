@@ -22,4 +22,9 @@ public class ExamServiceImpl implements ExamService {
     public ExpandableExam findExpandableExam(final UUID examId) {
         return examRepository.findExpandableExam(examId);
     }
+
+    @Override
+    public void updateStatus(final UUID examId, final String status) {
+        examRepository.updateStatus(examId, status);
+    }
 }
