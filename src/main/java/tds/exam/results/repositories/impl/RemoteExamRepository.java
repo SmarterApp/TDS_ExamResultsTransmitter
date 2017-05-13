@@ -46,12 +46,13 @@ public class RemoteExamRepository implements ExamRepository {
                 properties.getExamUrl(),
                 EXAM_APP_CONTEXT,
                 examId))
-            .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_SEGMENTS)
             .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_ACCOMMODATIONS)
             .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_NOTES)
             .queryParam("expandableAttribute", ExpandableExamAttributes.EXAMINEE_ATTRIBUTES_AND_RELATIONSHIPS)
-            .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_PAGE_AND_ITEMS)
-            .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_STATUS_DATES);
+            .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_STATUS_DATES)
+            .queryParam("expandableAttribute", ExpandableExamAttributes.WINDOW_ATTEMPTS)
+            .queryParam("expandableAttribute", ExpandableExamAttributes.ITEM_RESPONSE_UPDATES)
+            .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_SEGMENT_WRAPPERS);
 
 
         responseEntity = restTemplate.exchange(
