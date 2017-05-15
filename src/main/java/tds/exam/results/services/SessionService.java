@@ -2,6 +2,7 @@ package tds.exam.results.services;
 
 import java.util.UUID;
 
+import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
 
 /**
@@ -15,4 +16,12 @@ public interface SessionService {
      * @return The {@link tds.session.Session} with the given id
      */
     Session findSessionById(final UUID sessionId);
+
+    /**
+     * Retrieves the extern by client name
+     *
+     * @param clientName the client name for the exam
+     * @return The {@link tds.session.ExternalSessionConfiguration}
+     */
+    ExternalSessionConfiguration findExternalSessionConfigurationByClientName(final String clientName);
 }

@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import tds.assessment.Assessment;
+import tds.assessment.AssessmentWindow;
 import tds.exam.Exam;
 import tds.exam.ExpandableExam;
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
@@ -24,6 +27,7 @@ import tds.exam.results.services.SessionService;
 import tds.exam.results.services.TestIntegrationSystemService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
+import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
 
 @Service
@@ -65,7 +69,8 @@ public class ExamResultsServiceImpl implements ExamResultsService {
                 findAndSendExamResults(examId, report);
             } catch (Exception e) {
                 // Log error, and do not rethrow to prevent ERT from re-processing this same request
-                log.error("Error occurred while processing or sending the exam results for examId {}: " + e.getStackTrace());
+                log.error("Error occurred while processing or sending the exam results for examId {}: {}", examId,
+                    e);
             }
         }
 
@@ -77,8 +82,12 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         final Exam exam = expandableExam.getExam();
         final Session session = sessionService.findSessionById(exam.getSessionId());
         final Assessment assessment = assessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey());
+        final ExternalSessionConfiguration externs = sessionService.findExternalSessionConfigurationByClientName(exam.getClientName());
+        final List<AssessmentWindow> assessmentWindows = assessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(),
+            exam.getStudentId(), externs);
 
-        report.setOpportunity(OpportunityMapper.mapOpportunity(expandableExam, session, assessment));
+
+        report.setOpportunity(OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows));
         report.setExaminee(ExamineeMapper.mapExaminee(expandableExam));
         report.setTest(TestMapper.mapTest(assessment));
         CommentMapper.mapComments(report.getComment(), expandableExam);

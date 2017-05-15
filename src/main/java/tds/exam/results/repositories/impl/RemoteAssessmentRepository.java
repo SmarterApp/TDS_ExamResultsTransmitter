@@ -11,9 +11,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 import tds.assessment.Assessment;
+import tds.assessment.AssessmentWindow;
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.repositories.AssessmentRepository;
+import tds.session.ExternalSessionConfiguration;
+
+import static tds.exam.results.configuration.SupportApplicationConfiguration.ASSESSMENT_APP_CONTEXT;
 
 @Repository
 public class RemoteAssessmentRepository implements AssessmentRepository {
@@ -41,6 +47,32 @@ public class RemoteAssessmentRepository implements AssessmentRepository {
             HttpMethod.GET,
             requestHttpEntity,
             new ParameterizedTypeReference<Assessment>() {
+            });
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<AssessmentWindow> findAssessmentWindows(final String clientName,
+                                                        final String assessmentId,
+                                                        final long studentId,
+                                                        final ExternalSessionConfiguration configuration) {
+        UriComponentsBuilder builder =
+            UriComponentsBuilder
+                .fromHttpUrl(String.format("%s/%s/%s/%s/windows/student/%d",
+                    properties.getAssessmentUrl(),
+                    clientName,
+                    ASSESSMENT_APP_CONTEXT,
+                    assessmentId,
+                    studentId));
+
+        builder.queryParam("shiftWindowStart", configuration.getShiftWindowStart());
+        builder.queryParam("shiftWindowEnd", configuration.getShiftWindowEnd());
+        builder.queryParam("shiftFormStart", configuration.getShiftFormStart());
+        builder.queryParam("shiftFormEnd", configuration.getShiftFormEnd());
+
+        ResponseEntity<List<AssessmentWindow>> responseEntity = restTemplate.exchange(builder.build().toUri(),
+            HttpMethod.GET, null, new ParameterizedTypeReference<List<AssessmentWindow>>() {
             });
 
         return responseEntity.getBody();

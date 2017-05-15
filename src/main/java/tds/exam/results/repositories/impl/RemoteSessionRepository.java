@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.repositories.SessionRepository;
+import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
 
 import static tds.exam.results.configuration.SupportApplicationConfiguration.SESSION_APP_CONTEXT;
@@ -32,5 +33,15 @@ public class RemoteSessionRepository implements SessionRepository {
             sessionId));
 
         return restTemplate.getForObject(builder.build().toUri(), Session.class);
+    }
+
+    @Override
+    public ExternalSessionConfiguration findExternalSessionConfigurationByClientName(final String clientName) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/%s/external-config/%s",
+            properties.getSessionUrl(),
+            SESSION_APP_CONTEXT,
+            clientName));
+
+        return restTemplate.getForObject(builder.build().toUri(), ExternalSessionConfiguration.class);
     }
 }

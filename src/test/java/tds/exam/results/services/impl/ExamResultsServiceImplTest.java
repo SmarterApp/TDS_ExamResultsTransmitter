@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import tds.assessment.Assessment;
+import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
 import tds.exam.Exam;
 import tds.exam.ExamAccommodation;
@@ -37,6 +38,7 @@ import tds.exam.results.services.SessionService;
 import tds.exam.results.services.TestIntegrationSystemService;
 import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
+import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
@@ -86,7 +88,6 @@ public class ExamResultsServiceImplTest {
         Assessment assessment = random(Assessment.class);
         List<ExamPage> examPages = randomListOf(10, ExamPage.class);
         List<ExamAccommodation> examAccommodations = randomListOf(20, ExamAccommodation.class);
-        List<ExamSegment> examSegments = randomListOf(2, ExamSegment.class);
         List<ExamineeAttribute> examineeAttributes = randomListOf(20, ExamineeAttribute.class);
         List<ExamineeRelationship> examineeRelationships = randomListOf(5, ExamineeRelationship.class);
         List<ExamineeNote> examineeNotes = randomListOf(3, ExamineeNote.class);
@@ -98,10 +99,8 @@ public class ExamResultsServiceImplTest {
             .withExamItems(examItems)
             .withExamPages(examPages)
             .withExamAccommodations(examAccommodations)
-            .withExamSegments(examSegments)
-            .withStartedAt(Instant.now().minus(2000))
-            .withCompletedAt(Instant.now().minus(500))
             .withExamineeAttributes(examineeAttributes)
+            .withExamSegmentWrappers(new ArrayList<>())
             .withExamineeRelationship(examineeRelationships)
             .withExamineeNotes(examineeNotes)
             .build();
@@ -113,9 +112,15 @@ public class ExamResultsServiceImplTest {
         assessment.setAcademicYear("2017");
         assessment.setGrades(Arrays.asList("7", "8"));
 
+        ExternalSessionConfiguration configuration = random(ExternalSessionConfiguration.class);
+        List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+        when(mockProperties.isRetryOnError()).thenReturn(true);
         when(mockExamService.findExpandableExam(exam.getId())).thenReturn(expandableExam);
         when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
         when(mockSessionService.findSessionById(exam.getSessionId())).thenReturn(session);
+        when(mockSessionService.findExternalSessionConfigurationByClientName(exam.getClientName())).thenReturn(configuration);
+        when(mockAssessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId(), configuration))
+            .thenReturn(assessmentWindows);
 
         TDSReport report = examResultsService.findAndSendExamResults(expandableExam.getExam().getId());
 
@@ -124,6 +129,8 @@ public class ExamResultsServiceImplTest {
         verify(mockSessionService).findSessionById(exam.getSessionId());
         verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), any());
         verify(mockTestIntegrationSystemService).sendResults(eq(exam.getId()), any());
+        verify(mockSessionService).findExternalSessionConfigurationByClientName(exam.getClientName());
+        verify(mockAssessmentService).findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId(), configuration);
         // NOTE: Actual mapping logic unit test coverage will be in each individual Mapper class
         assertThat(report).isNotNull();
         assertThat(report.getTest()).isNotNull();
@@ -148,6 +155,7 @@ public class ExamResultsServiceImplTest {
                 .withItemType(random(String.class))
                 .withResponse(random(ExamItemResponse.class))
                 .withItemFilePath("/path/to/file")
+                .withGroupId("groupId")
                 .build();
 
             examItems.add(examItem);
