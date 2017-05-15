@@ -100,23 +100,23 @@ public class OpportunityMapper {
                                                               final List<TDSReport.Opportunity.Item> opportunityItems,
                                                               final Map<String, Item> assessmentItems) {
         Map<UUID, Integer> itemVisitsMap = expandableExam.getItemResponseUpdates();
-        final List<ExamSegment> examSegments = expandableExam.getExamSegmentWrappers().stream()
+        final Map<String, ExamSegment> examSegments = expandableExam.getExamSegmentWrappers().stream()
             .map(wrapper -> wrapper.getExamSegment())
-            .collect(Collectors.toList());
+            .collect(Collectors.toMap(ExamSegment::getSegmentKey, Function.identity()));
+        final Map<UUID, ExamPageWrapper> examPageWrappers = expandableExam.getExamSegmentWrappers().stream()
+            .flatMap(segment -> segment.getExamPages().stream())
+            .collect(Collectors.toMap(wrapper -> wrapper.getExamPage().getId(), Function.identity()));
 
         for (ExamItem examItem : examItems) {
             // find the page (wrapper) for this exam item - this should never be "empty"
-            final ExamPageWrapper examPageWrapper = expandableExam.getExamSegmentWrappers().stream()
-                .flatMap(segment -> segment.getExamPages().stream()
-                    .filter(pageWrapper -> pageWrapper.getExamPage().getId().equals(examItem.getExamPageId())))
-                .findFirst().get();
+            final ExamPageWrapper examPageWrapper = examPageWrappers.get(examItem.getExamPageId());
             final ExamPage examPage = examPageWrapper.getExamPage();
 
             TDSReport.Opportunity.Item opportunityItem = new TDSReport.Opportunity.Item();
             Item assessmentItem = assessmentItems.get(examItem.getItemKey());
 
             opportunityItem.setPosition(examItem.getPosition());
-            opportunityItem.setSegmentId(getSegmentIdFromSegmentKey(examSegments, examPage.getSegmentKey()));
+            opportunityItem.setSegmentId(examSegments.get(examPage.getSegmentKey()).getSegmentId());
             opportunityItem.setBankKey(examItem.getAssessmentItemBankKey());
             opportunityItem.setKey(examItem.getAssessmentItemKey());
             opportunityItem.setClientId(assessmentItem.getClientId());
@@ -172,14 +172,6 @@ public class OpportunityMapper {
                 opportunityItem.setScore(String.valueOf(ITEM_NOT_SCORED_VALUE));
             }
         }
-    }
-
-    private static String getSegmentIdFromSegmentKey(final List<ExamSegment> examSegments, final String segmentKey) {
-        return examSegments.stream()
-            .filter(seg -> seg.getSegmentKey().equals(segmentKey))
-            .map(ExamSegment::getSegmentId)
-            .findFirst()
-            .get();
     }
 
     private static void mapExamAccommodationsToOpportunity(final List<ExamAccommodation> examAccommodations,

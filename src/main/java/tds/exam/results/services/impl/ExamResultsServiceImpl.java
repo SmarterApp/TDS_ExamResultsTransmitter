@@ -78,7 +78,6 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     }
 
     private void findAndSendExamResults(final UUID examId, final TDSReport report) {
-        //TODO: Look into making these service calls asynchronously
         final ExpandableExam expandableExam = examService.findExpandableExam(examId);
         final Exam exam = expandableExam.getExam();
         final Session session = sessionService.findSessionById(exam.getSessionId());

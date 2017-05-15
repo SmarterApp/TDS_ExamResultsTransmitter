@@ -155,6 +155,7 @@ public class ExamResultsServiceImplTest {
                 .withItemType(random(String.class))
                 .withResponse(random(ExamItemResponse.class))
                 .withItemFilePath("/path/to/file")
+                .withGroupId("groupId")
                 .build();
 
             examItems.add(examItem);

@@ -160,6 +160,7 @@ public class OpportunityMapperTest {
                 .withItemType(random(String.class))
                 .withResponse(random(ExamItemResponse.class))
                 .withItemFilePath("/path/to/file/")
+                .withGroupId("groupId")
                 .build();
 
             pageWrappers.add(new ExamPageWrapper(examPages.get(i), Collections.singletonList(examItem)));
