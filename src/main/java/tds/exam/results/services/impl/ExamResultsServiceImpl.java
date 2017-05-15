@@ -70,7 +70,7 @@ public class ExamResultsServiceImpl implements ExamResultsService {
             } catch (Exception e) {
                 // Log error, and do not rethrow to prevent ERT from re-processing this same request
                 log.error("Error occurred while processing or sending the exam results for examId {}: {}", examId,
-                    e.getMessage());
+                    e);
             }
         }
 
