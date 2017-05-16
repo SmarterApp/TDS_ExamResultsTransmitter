@@ -30,7 +30,8 @@ public class AssessmentServiceImpl implements AssessmentService {
 
     @Override
     @Cacheable(CacheType.LONG_TERM)
-    public List<AssessmentWindow> findAssessmentWindows(final String clientName, final String assessmentId, final long studentId, final ExternalSessionConfiguration configuration) {
-        return assessmentRepository.findAssessmentWindows(clientName, assessmentId, studentId, configuration);
+    public List<AssessmentWindow> findAssessmentWindows(final String clientName, final String assessmentId, final boolean guestStudent,
+                                                        final ExternalSessionConfiguration configuration) {
+        return assessmentRepository.findAssessmentWindows(clientName, assessmentId, guestStudent, configuration);
     }
 }
