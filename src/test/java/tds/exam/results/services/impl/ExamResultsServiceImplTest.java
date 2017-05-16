@@ -119,7 +119,7 @@ public class ExamResultsServiceImplTest {
         when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
         when(mockSessionService.findSessionById(exam.getSessionId())).thenReturn(session);
         when(mockSessionService.findExternalSessionConfigurationByClientName(exam.getClientName())).thenReturn(configuration);
-        when(mockAssessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId(), configuration))
+        when(mockAssessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId() < 0, configuration))
             .thenReturn(assessmentWindows);
 
         TDSReport report = examResultsService.findAndSendExamResults(expandableExam.getExam().getId());
@@ -130,7 +130,7 @@ public class ExamResultsServiceImplTest {
         verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), any());
         verify(mockTestIntegrationSystemService).sendResults(eq(exam.getId()), any());
         verify(mockSessionService).findExternalSessionConfigurationByClientName(exam.getClientName());
-        verify(mockAssessmentService).findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId(), configuration);
+        verify(mockAssessmentService).findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId() < 0, configuration);
         // NOTE: Actual mapping logic unit test coverage will be in each individual Mapper class
         assertThat(report).isNotNull();
         assertThat(report.getTest()).isNotNull();

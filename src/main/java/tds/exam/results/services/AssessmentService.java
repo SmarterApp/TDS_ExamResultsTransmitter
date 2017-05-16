@@ -24,10 +24,10 @@ public interface AssessmentService {
      *
      * @param clientName    environment's client name
      * @param assessmentId  the assessment id for the assessment
-     * @param studentId     identifier to the student
+     * @param guestStudent  flag indicating whether the windows should be retrieved for a guest student
      * @param configuration {@link tds.session.ExternalSessionConfiguration} for the environment
      * @return array of {@link tds.assessment.AssessmentWindow}
      */
     List<AssessmentWindow> findAssessmentWindows(final String clientName, final String assessmentId,
-                                                 final long studentId, final ExternalSessionConfiguration configuration);
+                                                 final boolean guestStudent, final ExternalSessionConfiguration configuration);
 }

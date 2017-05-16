@@ -83,9 +83,9 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         final Session session = sessionService.findSessionById(exam.getSessionId());
         final Assessment assessment = assessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey());
         final ExternalSessionConfiguration externs = sessionService.findExternalSessionConfigurationByClientName(exam.getClientName());
-        final List<AssessmentWindow> assessmentWindows = assessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(),
-            exam.getStudentId(), externs);
-
+        final boolean guestStudent = exam.getStudentId() < 0;
+        final List<AssessmentWindow> assessmentWindows = assessmentService.findAssessmentWindows(exam.getClientName(),
+            exam.getAssessmentId(), guestStudent, externs);
 
         report.setOpportunity(OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows));
         report.setExaminee(ExamineeMapper.mapExaminee(expandableExam));
