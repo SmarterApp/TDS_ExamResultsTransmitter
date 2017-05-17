@@ -27,7 +27,6 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    @Cacheable(CacheType.LONG_TERM)
     public ExternalSessionConfiguration findExternalSessionConfigurationByClientName(final String clientName) {
         return sessionRepository.findExternalSessionConfigurationByClientName(clientName);
     }
