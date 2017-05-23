@@ -39,7 +39,6 @@ public class ExamResultsServiceImpl implements ExamResultsService {
     private final TDSReportValidator tdsReportValidator;
     private final ExamReportAuditService examReportAuditService;
     private final TestIntegrationSystemService testIntegrationSystemService;
-    private final ExamResultsTransmitterServiceProperties properties;
 
     @Autowired
     public ExamResultsServiceImpl(final ExamService examService,
@@ -47,9 +46,7 @@ public class ExamResultsServiceImpl implements ExamResultsService {
                                   final AssessmentService assessmentService,
                                   final TDSReportValidator tdsReportValidator,
                                   final ExamReportAuditService examReportAuditService,
-                                  final TestIntegrationSystemService testIntegrationSystemService,
-                                  final ExamResultsTransmitterServiceProperties properties) {
-        this.properties = properties;
+                                  final TestIntegrationSystemService testIntegrationSystemService) {
         this.examService = examService;
         this.sessionService = sessionService;
         this.assessmentService = assessmentService;
@@ -60,20 +57,8 @@ public class ExamResultsServiceImpl implements ExamResultsService {
 
     @Override
     public TDSReport findAndSendExamResults(final UUID examId) {
-        TDSReport report = new TDSReport();
-
-        if (properties.isRetryOnError()) {
-            findAndSendExamResults(examId, report);
-        } else {
-            try {
-                findAndSendExamResults(examId, report);
-            } catch (Exception e) {
-                // Log error, and do not rethrow to prevent ERT from re-processing this same request
-                log.error("Error occurred while processing or sending the exam results for examId {}: {}", examId,
-                    e);
-            }
-        }
-
+        final TDSReport report = new TDSReport();
+        findAndSendExamResults(examId, report);
         return report;
     }
 

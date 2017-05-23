@@ -1,21 +1,11 @@
 package tds.exam.results.services.impl;
 
-import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xml.sax.SAXException;
-
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -24,12 +14,10 @@ import tds.exam.ExamAccommodation;
 import tds.exam.ExamItem;
 import tds.exam.ExamItemResponse;
 import tds.exam.ExamPage;
-import tds.exam.ExamSegment;
 import tds.exam.ExamineeAttribute;
 import tds.exam.ExamineeNote;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
-import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.services.AssessmentService;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
@@ -40,6 +28,14 @@ import tds.exam.results.trt.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
@@ -71,13 +67,10 @@ public class ExamResultsServiceImplTest {
     @Mock
     private TestIntegrationSystemService mockTestIntegrationSystemService;
 
-    @Mock
-    private ExamResultsTransmitterServiceProperties mockProperties;
-
     @Before
     public void setup() throws JAXBException {
         examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService,
-            mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService, mockProperties);
+            mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService);
     }
 
     @Test
@@ -114,7 +107,6 @@ public class ExamResultsServiceImplTest {
 
         ExternalSessionConfiguration configuration = random(ExternalSessionConfiguration.class);
         List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
-        when(mockProperties.isRetryOnError()).thenReturn(true);
         when(mockExamService.findExpandableExam(exam.getId())).thenReturn(expandableExam);
         when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
         when(mockSessionService.findSessionById(exam.getSessionId())).thenReturn(session);
