@@ -15,7 +15,7 @@ import tds.exam.results.trt.TDSReport;
  * A class used for mapping a {@link tds.exam.results.trt.TDSReport.Test} object from {@link tds.assessment.Assessment} data
  */
 public class TestMapper {
-    private final static Logger log = LoggerFactory.getLogger(TestMapper.class);
+    private final static Logger LOG = LoggerFactory.getLogger(TestMapper.class);
     private final static String TEST_MODE_ONLINE = "online";
     private static final String HIGH_SCHOOL_GRADE_STRING = "HS";
     private static final int MIN_HIGH_SCHOOL_GRADE = 9;
@@ -60,7 +60,7 @@ public class TestMapper {
     private static long parseLatestAcademicYear(final String academicYearString, final String key) {
         if (academicYearString.equals("")) {
             // If the configs.tbltestadmin table is not configured with an academic year, set this value to 0
-            log.error("The academic year for the assessment was not set in the configuration database for assessment {}. Defaulting to '0'.",
+            LOG.warn("The academic year for the assessment was not set in the configuration database for assessment {}. Defaulting to '0'.",
                 key);
             return 0;
         }
