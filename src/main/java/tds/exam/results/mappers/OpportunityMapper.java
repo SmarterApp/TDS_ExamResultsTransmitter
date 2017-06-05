@@ -49,6 +49,7 @@ public class OpportunityMapper {
             .collect(Collectors.toList());
 
         TDSReport.Opportunity opportunity = new TDSReport.Opportunity();
+        opportunity.setOppId("0");
         opportunity.setKey(exam.getId().toString());
         opportunity.setDatabase(EXAM_DATABASE_NAME);
         opportunity.setStartDate(exam.getStartedAt().toDateTime().toString());
