@@ -4,12 +4,14 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
 import tds.exam.results.messaging.ExamCompletedMessageListener;
 
@@ -47,5 +49,13 @@ public class ExamResultsTransmitterMessagingConfiguration {
         container.setQueueNames(QUEUE_EXAM_COMPLETION);
         container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
         return container;
+    }
+
+    @Bean
+    RetryOperationsInterceptor examCompletionInterceptor() {
+        return RetryInterceptorBuilder.stateless()
+            .maxAttempts(3)
+            .recoverer(new ExamResultsTransmitterMessageRecoverer())
+            .build();
     }
 }
