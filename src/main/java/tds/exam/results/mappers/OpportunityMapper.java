@@ -49,6 +49,8 @@ public class OpportunityMapper {
             .collect(Collectors.toList());
 
         TDSReport.Opportunity opportunity = new TDSReport.Opportunity();
+        // required by TIS server to be an integer value
+        opportunity.setOppId("0");
         opportunity.setKey(exam.getId().toString());
         opportunity.setDatabase(EXAM_DATABASE_NAME);
         opportunity.setStartDate(exam.getStartedAt().toDateTime().toString());

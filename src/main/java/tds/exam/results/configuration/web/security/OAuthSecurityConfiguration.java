@@ -45,8 +45,8 @@ public class OAuthSecurityConfiguration {
     }
 
     @Bean
-    public OAuth2RestOperations oauthRestTemplate(final OAuth2ClientContext context) {
-        final OAuth2RestTemplate template = new OAuth2RestTemplate(resourceDetails(), context);
+    public OAuth2RestOperations oauthRestTemplate() {
+        final OAuth2RestTemplate template = new OAuth2RestTemplate(resourceDetails());
         template.setRequestFactory(clientHttpRequestFactory());
         return template;
     }
