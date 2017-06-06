@@ -92,6 +92,7 @@ public class OpportunityMapperTest {
         assertThat(opportunity.getWindowId()).isEqualTo(exam.getAssessmentWindowId());
         assertThat(opportunity.getAssessmentParticipantSessionPlatformUserAgent()).isEqualTo(exam.getBrowserUserAgent());
         assertThat(opportunity.getWindowOpportunity()).isEqualTo(String.valueOf(expandableExam.getWindowAttempts()));
+        assertThat(Integer.valueOf(opportunity.getOppId())).isInstanceOf(Integer.class);
 
         // ExamSegment assertions
         assertThat(opportunity.getSegment().size()).isEqualTo(1);
