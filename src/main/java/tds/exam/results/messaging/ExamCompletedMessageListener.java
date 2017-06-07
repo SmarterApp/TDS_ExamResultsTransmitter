@@ -1,5 +1,6 @@
 package tds.exam.results.messaging;
 
+import com.esotericsoftware.minlog.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,13 @@ public class ExamCompletedMessageListener {
      */
     public void handleMessage(final String examId) {
         LOG.debug("Received completed exam notification for id: {}", examId);
-        processMessage(examId);
+
+        try{
+            processMessage(examId);
+        } catch (Exception e) {
+            Log.error(String.format("Unexpected error sending TRT for exam %s", examId), e);
+            throw e;
+        }
     }
 
     private void processMessage(final String examId) {
