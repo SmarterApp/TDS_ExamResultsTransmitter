@@ -2,6 +2,12 @@ package tds.exam.results.mappers;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -21,13 +27,6 @@ import tds.exam.wrapper.ExamPageWrapper;
 import tds.exam.wrapper.ExamSegmentWrapper;
 import tds.session.Session;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 /**
  * A class used for mapping a {@link tds.exam.results.trt.TDSReport.Opportunity} object from Exam and Session data
  */
@@ -36,6 +35,9 @@ public class OpportunityMapper {
     private static final float ITEM_NOT_SCORED_VALUE = -1;
     private static final String DEFAULT_ALGORITHM_VERSION = "0";
     private static final String EXAM_DATABASE_NAME = "exam";
+
+    //This is the hard coded value for score dimensions in the TDS TRT based on ReportingDLL
+    private static final String SCORE_DIMENSION_VALUE = "overall";
 
     public static TDSReport.Opportunity mapOpportunity(final ExpandableExam expandableExam,
                                                        final Session session,
@@ -132,7 +134,6 @@ public class OpportunityMapper {
             opportunityItem.setPageNumber(examPage.getPagePosition());
             opportunityItem.setPageTime((int) examPage.getDuration());
             opportunityItem.setDropped(assessmentItem.isNotForScoring() ? (short) 1 : 0);
-            opportunityItems.add(opportunityItem);
 
             // If the item response has a score, set it. Otherwise default to -1
             if (examItem.getResponse().isPresent()) {
@@ -162,7 +163,7 @@ public class OpportunityMapper {
                     scoreInfo.setScorePoint(scoreString);
                     scoreInfo.setMaxScore(String.valueOf(assessmentItem.getMaxScore()));
                     scoreInfo.setScoreStatus(scoreStatus);
-                    scoreInfo.setScoreDimension(score.getScoringDimensions());
+                    scoreInfo.setScoreDimension(SCORE_DIMENSION_VALUE);
 
                     opportunityItem.setScoreInfo(scoreInfo);
                     opportunityItem.setScore(scoreString);
@@ -173,6 +174,8 @@ public class OpportunityMapper {
             } else {
                 opportunityItem.setScore(String.valueOf(ITEM_NOT_SCORED_VALUE));
             }
+
+            opportunityItems.add(opportunityItem);
         }
     }
 

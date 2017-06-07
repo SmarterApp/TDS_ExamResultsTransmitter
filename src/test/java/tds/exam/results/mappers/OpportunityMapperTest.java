@@ -41,7 +41,7 @@ public class OpportunityMapperTest {
         List<ExamPageWrapper> pageWrappers = mapMockExamPagesAndItems(examPages);
 
         ExamSegmentWrapper examSegmentWrapper = new ExamSegmentWrapper(
-            new ExamSegment.Builder()
+            ExamSegment.Builder
                 .fromSegment(random(ExamSegment.class))
                 .withSegmentKey("segmentKey1")
                 .withSegmentId("segmentId1")
@@ -138,6 +138,7 @@ public class OpportunityMapperTest {
             assertThat(response).isNotNull();
             assertThat(response.getContent()).isNotNull();
             assertThat(response.getDate()).isNotNull();
+            assertThat(item.getScoreInfo().getScoreDimension()).isEqualTo("overall");
         }
     }
 
@@ -146,7 +147,7 @@ public class OpportunityMapperTest {
         // Mock/map the exam page ids from "ExamItems" to actual ExamPages.
         for (int i = 1; i < 5; i++) {
             ExamPage page = examPages.get(i);
-            examPages.set(i, new ExamPage.Builder()
+            examPages.set(i, ExamPage.Builder
                 .fromExamPage(page)
                 .withId(UUID.randomUUID())
                 .withSegmentKey("segmentKey1")
