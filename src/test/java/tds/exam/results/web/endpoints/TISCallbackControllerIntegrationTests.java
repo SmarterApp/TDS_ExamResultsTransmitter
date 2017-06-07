@@ -50,11 +50,8 @@ public class TISCallbackControllerIntegrationTests {
 
     @Test
     public void shouldSendMessageForNoErrorFound() throws Exception {
-        final TISState tisState = new TISState.Builder()
-            .withExamId(UUID.randomUUID().toString())
-            .withSuccess(true)
-            .build();
-        final UUID examId = UUID.fromString(tisState.getExamId());
+        final TISState tisState = new TISState(UUID.randomUUID().toString(), true);
+        final UUID examId = UUID.fromString(tisState.getOppKey());
 
         http.perform(post(new URI("/tis"))
             .contentType(MediaType.APPLICATION_JSON)
@@ -67,10 +64,7 @@ public class TISCallbackControllerIntegrationTests {
 
     @Test
     public void shouldReturn400ForBadExamId() throws Exception {
-        final TISState tisState = new TISState.Builder()
-            .withExamId("not-a-uuid")
-            .withSuccess(true)
-            .build();
+        final TISState tisState = new TISState("not-a-uuid", true);
 
         http.perform(post(new URI("/tis"))
             .contentType(MediaType.APPLICATION_JSON)

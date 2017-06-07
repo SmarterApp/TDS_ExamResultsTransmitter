@@ -23,6 +23,6 @@ public class TISCallbackController {
 
     @RequestMapping(value = "/tis", method= RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void tisCallback(@RequestBody final TISState state) {
-        messagingService.sendReportAcknowledgement(UUID.fromString(state.getExamId()), state);
+        messagingService.sendReportAcknowledgement(UUID.fromString(state.getOppKey()), state);
     }
 }

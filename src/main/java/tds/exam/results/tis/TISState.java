@@ -1,14 +1,12 @@
 package tds.exam.results.tis;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import static tds.common.util.Preconditions.checkNotNull;
 
 /**
  * An object representing a TIS response from
  */
 public class TISState {
-    private String examId;
+    private String oppKey;
     private boolean success;
     private String error;
 
@@ -17,46 +15,22 @@ public class TISState {
      */
     private TISState() {}
 
-    public TISState(Builder builder) {
-        this.examId = checkNotNull(builder.examId);
-        this.success = builder.success;
-        this.error = builder.error;
+    public TISState(final String oppKey, final boolean success, final String error) {
+        this.oppKey = checkNotNull(oppKey);
+        this.success = success;
+        this.error = error;
     }
 
-    public static final class Builder {
-        private String examId;
-        private boolean success;
-        private String error;
-
-        public Builder() {
-        }
-
-        public Builder withExamId(String examId) {
-            this.examId = examId;
-            return this;
-        }
-
-        public Builder withSuccess(boolean success) {
-            this.success = success;
-            return this;
-        }
-
-        public Builder withError(String error) {
-            this.error = error;
-            return this;
-        }
-
-        public TISState build() {
-            return new TISState(this);
-        }
+    public TISState(final String oppKey, final boolean success) {
+        this.oppKey = oppKey;
+        this.success = success;
     }
 
     /**
      * @return The id of the exam that was reported
      */
-    @JsonProperty("oppKey")
-    public String getExamId() {
-        return examId;
+    public String getOppKey() {
+        return oppKey;
     }
 
     /**
@@ -71,5 +45,14 @@ public class TISState {
      */
     public String getError() {
         return error;
+    }
+
+    @Override
+    public String toString() {
+        return "TISState{" +
+            "oppKey='" + oppKey + '\'' +
+            ", success=" + success +
+            ", error='" + error + '\'' +
+            '}';
     }
 }

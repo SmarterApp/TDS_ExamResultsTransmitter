@@ -34,38 +34,28 @@ public class MessagingServiceImplTest {
 
     @Test
     public void shouldSendMessageToReportQueue() {
-        final TISState tisState = new TISState.Builder()
-            .withExamId(UUID.randomUUID().toString())
-            .withSuccess(true)
-            .build();
-        final UUID examId = UUID.fromString(tisState.getExamId());
+        final TISState tisState = new TISState(UUID.randomUUID().toString(), true);
+        final UUID examId = UUID.fromString(tisState.getOppKey());
 
         messagingService.sendReportAcknowledgement(examId, tisState);
-        verify(mockRabbitTemplate).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        verify(mockRabbitTemplate).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getOppKey()), isA(CorrelationData.class));
     }
 
     @Test
     public void shouldNotSendMessageIfUnsuccessful() {
-        final TISState tisState = new TISState.Builder()
-            .withExamId(UUID.randomUUID().toString())
-            .withSuccess(false)
-            .build();
-        final UUID examId = UUID.fromString(tisState.getExamId());
+        final TISState tisState = new TISState(UUID.randomUUID().toString(), false);
+        final UUID examId = UUID.fromString(tisState.getOppKey());
 
         messagingService.sendReportAcknowledgement(examId, tisState);
-        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getOppKey()), isA(CorrelationData.class));
     }
 
     @Test
     public void shouldNotSendMessageIfErrorPresent() {
-        final TISState tisState = new TISState.Builder()
-            .withExamId(UUID.randomUUID().toString())
-            .withSuccess(true)
-            .withError("Whoopsies!")
-            .build();
-        final UUID examId = UUID.fromString(tisState.getExamId());
+        final TISState tisState = new TISState(UUID.randomUUID().toString(), false, "Whoops");
+        final UUID examId = UUID.fromString(tisState.getOppKey());
 
         messagingService.sendReportAcknowledgement(examId, tisState);
-        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
+        verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getOppKey()), isA(CorrelationData.class));
     }
 }
