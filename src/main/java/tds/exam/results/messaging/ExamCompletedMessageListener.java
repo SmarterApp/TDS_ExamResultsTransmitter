@@ -4,12 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tds.exam.ExamStatusCode;
-import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
-import tds.exam.results.services.ExamResultsService;
-import tds.exam.results.services.ExamService;
 
 import java.util.UUID;
+
+import tds.exam.ExamStatusCode;
+import tds.exam.results.services.ExamResultsService;
+import tds.exam.results.services.ExamService;
 
 /**
  * This Messaging listener is responsible for handling Exam completion messages.
@@ -49,7 +49,7 @@ public class ExamCompletedMessageListener {
     private void processMessage(final String examId) {
         // Once this ERT message has been received, the exam status is "submitted"
         final UUID id = UUID.fromString(examId);
-        examService.updateStatus(id, ExamStatusCode.STATUS_SUBMITTED);
         examResultsService.findAndSendExamResults(id);
+        examService.updateStatus(id, ExamStatusCode.STATUS_SUBMITTED);
     }
 }

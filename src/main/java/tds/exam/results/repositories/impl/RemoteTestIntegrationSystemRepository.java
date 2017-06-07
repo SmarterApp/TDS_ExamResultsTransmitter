@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
@@ -32,7 +33,7 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
     @Override
     public void sendResults(final UUID examId, final String results) {
         if (!properties.isSendToTis()) {
-            log.info("TIS XML not sent: " + results);
+            log.info("SendToTIS configuration property is false resulting in TIS XML not sent: " + results);
             return;
         }
 
@@ -42,10 +43,14 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/api/testresult", properties.getTisUrl()))
             .queryParam("statusCallback", properties.getTisCallbackUrl());
 
-        restTemplate.exchange(
-            builder.build().toUri(),
-            HttpMethod.POST,
-            requestHttpEntity,
-            String.class);
+        try {
+            restTemplate.exchange(
+                builder.build().toUri(),
+                HttpMethod.POST,
+                requestHttpEntity,
+                String.class);
+        } catch (final HttpStatusCodeException e) {
+            throw new RuntimeException(String.format("Unable to send test result to TIS: %s", e.getResponseBodyAsString()), e);
+        }
     }
 }

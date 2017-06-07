@@ -11,7 +11,7 @@ import tds.exam.results.services.ExamService;
 
 @Service
 public class ExamServiceImpl implements ExamService {
-    final ExamRepository examRepository;
+    private final ExamRepository examRepository;
 
     @Autowired
     public ExamServiceImpl(final ExamRepository examRepository) {

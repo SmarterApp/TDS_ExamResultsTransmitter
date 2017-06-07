@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -55,12 +56,16 @@ public class RemoteExamRepository implements ExamRepository {
             .queryParam("expandableAttribute", ExpandableExamAttributes.EXAM_SEGMENT_WRAPPERS);
 
 
-        responseEntity = restTemplate.exchange(
-            builder.build().toUri(),
-            HttpMethod.GET,
-            requestHttpEntity,
-            new ParameterizedTypeReference<ExpandableExam>() {
-            });
+        try {
+            responseEntity = restTemplate.exchange(
+                builder.build().toUri(),
+                HttpMethod.GET,
+                requestHttpEntity,
+                new ParameterizedTypeReference<ExpandableExam>() {
+                });
+        } catch (final HttpStatusCodeException e) {
+            throw new RuntimeException(String.format("Unable to find expandable exam: %s", e.getResponseBodyAsString()), e);
+        }
 
         return responseEntity.getBody();
     }
@@ -77,11 +82,15 @@ public class RemoteExamRepository implements ExamRepository {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/%s/%s/status",
           properties.getExamUrl(), EXAM_APP_CONTEXT, examId));
 
-        restTemplate.exchange(
-          builder.build().toUri(),
-          HttpMethod.PUT,
-          requestHttpEntity,
-          new ParameterizedTypeReference<NoContentResponseResource>() {
-          });
+        try {
+            restTemplate.exchange(
+                builder.build().toUri(),
+                HttpMethod.PUT,
+                requestHttpEntity,
+                new ParameterizedTypeReference<NoContentResponseResource>() {
+                });
+        } catch (final HttpStatusCodeException e) {
+            throw new RuntimeException(String.format("Unable to update exam status: %s", e.getResponseBodyAsString()), e);
+        }
     }
 }
