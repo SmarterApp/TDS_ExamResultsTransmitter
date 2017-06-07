@@ -45,29 +45,4 @@ public class ExamCompletedMessageListenerTest {
         verify(mockExamService).updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
         verify(mockExamResultsService).findAndSendExamResults(examId);
     }
-
-    @Test(expected = IllegalStateException.class)
-    public void itShouldOptionallyRetryOnError() {
-        final UUID examId = UUID.randomUUID();
-
-        when(mockProperties.isRetryOnError()).thenReturn(true);
-        doThrow(new IllegalStateException("Badness"))
-            .when(mockExamService)
-            .updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
-
-        listener.handleMessage(examId.toString());
-    }
-
-    @Test
-    public void itShouldOptionallyNotRetryOnError() {
-        final UUID examId = UUID.randomUUID();
-
-        when(mockProperties.isRetryOnError()).thenReturn(false);
-        doThrow(new IllegalStateException("Badness"))
-            .when(mockExamService)
-            .updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
-
-        listener.handleMessage(examId.toString());
-        verifyZeroInteractions(mockExamResultsService);
-    }
 }

@@ -13,7 +13,6 @@ public class ExamResultsTransmitterServiceProperties {
     private String tisCallbackUrl = "";
     private boolean validateTrtXml = false;
     private boolean sendToTis = false;
-    private boolean retryOnError = true;
     private long retryInitialInterval = 1000;
     private double retryIntervalMultiplier = 2;
     private long retryMaxInterval = 5000;
@@ -115,17 +114,6 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setSendToTis(boolean sendToTis) {
         this.sendToTis = sendToTis;
-    }
-
-    /**
-     * @return {@code true} to continuously retry on error
-     */
-    public boolean isRetryOnError() {
-        return retryOnError;
-    }
-
-    public void setRetryOnError(final boolean retryOnError) {
-        this.retryOnError = retryOnError;
     }
 
     /**
