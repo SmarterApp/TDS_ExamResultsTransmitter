@@ -5,28 +5,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.verification.VerificationMode;
-import org.omg.CORBA.Object;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.UUID;
 
 import tds.exam.results.services.MessagingService;
 import tds.exam.results.tis.TISState;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 import static tds.exam.ExamTopics.TOPIC_EXAM_REPORTED;
 import static tds.exam.ExamTopics.TOPIC_EXCHANGE;
 

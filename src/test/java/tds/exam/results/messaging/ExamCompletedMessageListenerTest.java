@@ -10,14 +10,10 @@ import javax.xml.bind.JAXBException;
 import java.util.UUID;
 
 import tds.exam.ExamStatusCode;
-import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamCompletedMessageListenerTest {
@@ -27,9 +23,6 @@ public class ExamCompletedMessageListenerTest {
 
     @Mock
     private ExamService mockExamService;
-
-    @Mock
-    private ExamResultsTransmitterServiceProperties mockProperties;
 
     private ExamCompletedMessageListener listener;
 
