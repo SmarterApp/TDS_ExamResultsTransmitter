@@ -50,7 +50,6 @@ exam-results-transmitter-service:
   tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
   send-to-tis: false
-  retry-on-error: false
   retry-initial-interval: 1000
   retry-interval-multiplier: 2
   retry-max-interval: 5000
