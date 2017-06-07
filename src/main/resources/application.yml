@@ -45,7 +45,7 @@ server:
 exam-results-transmitter-service:
   session-url: http://localhost:32842
   assessment-url: http://localhost:32841
-  exam-url: http://localhost:8081
+  exam-url: http://localhost:80
   tis-url: ${sbac.tis.url}
   tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
