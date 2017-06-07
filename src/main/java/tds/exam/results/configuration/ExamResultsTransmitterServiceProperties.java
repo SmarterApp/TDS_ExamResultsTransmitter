@@ -13,7 +13,10 @@ public class ExamResultsTransmitterServiceProperties {
     private String tisCallbackUrl = "";
     private boolean validateTrtXml = false;
     private boolean sendToTis = false;
-    private boolean retryOnError = true;
+    private long retryInitialInterval = 1000;
+    private double retryIntervalMultiplier = 2;
+    private long retryMaxInterval = 5000;
+    private int retryAmount = 3;
 
     /**
      * Get the URL for the session microservice.
@@ -114,13 +117,46 @@ public class ExamResultsTransmitterServiceProperties {
     }
 
     /**
-     * @return {@code true} to continuously retry on error
+     * @return the initial interval retry time that will be used as we graduate to larger numbers between retries
      */
-    public boolean isRetryOnError() {
-        return retryOnError;
+    public long getRetryInitialInterval() {
+        return retryInitialInterval;
     }
 
-    public void setRetryOnError(final boolean retryOnError) {
-        this.retryOnError = retryOnError;
+    public void setRetryInitialInterval(final long retryInitialInterval) {
+        this.retryInitialInterval = retryInitialInterval;
+    }
+
+    /**
+     * @return the interval between retries
+     */
+    public double getRetryIntervalMultiplier() {
+        return retryIntervalMultiplier;
+    }
+
+    public void setRetryIntervalMultiplier(final double retryIntervalMultiplier) {
+        this.retryIntervalMultiplier = retryIntervalMultiplier;
+    }
+
+    /**
+     * @return the max interval the retry will scale to
+     */
+    public long getRetryMaxInterval() {
+        return retryMaxInterval;
+    }
+
+    public void setRetryMaxInterval(final long retryMaxInterval) {
+        this.retryMaxInterval = retryMaxInterval;
+    }
+
+    /**
+     * @return the number of times a message will be retried
+     */
+    public int getRetryAmount() {
+        return retryAmount;
+    }
+
+    public void setRetryAmount(final int retryAmount) {
+        this.retryAmount = retryAmount;
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.messaging.ExamCompletedMessageListener;
 
 import static tds.exam.ExamTopics.TOPIC_EXAM_COMPLETED;
@@ -41,11 +43,17 @@ public class ExamResultsTransmitterMessagingConfiguration {
 
     @Bean
     public SimpleMessageListenerContainer examCompletionListenerContainer(final ConnectionFactory connectionFactory,
-                                                                          final ExamCompletedMessageListener listener) {
+                                                                          final ExamCompletedMessageListener listener,
+                                                                          final ExamResultsTransmitterServiceProperties properties) {
         final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(QUEUE_EXAM_COMPLETION);
         container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
+        container.setAdviceChain(RetryInterceptorBuilder.stateless()
+            .maxAttempts(properties.getRetryAmount())
+            .recoverer(new ExamResultsTransmitterMessageRecoverer())
+            .backOffOptions(properties.getRetryInitialInterval(), properties.getRetryIntervalMultiplier(), properties.getRetryMaxInterval())
+            .build());
         return container;
     }
 }
