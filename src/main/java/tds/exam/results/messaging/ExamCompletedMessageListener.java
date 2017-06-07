@@ -22,15 +22,11 @@ public class ExamCompletedMessageListener {
 
     private final ExamService examService;
 
-    private final ExamResultsTransmitterServiceProperties properties;
-
     @Autowired
     public ExamCompletedMessageListener(final ExamResultsService examResultsService,
-                                        final ExamService examService,
-                                        final ExamResultsTransmitterServiceProperties properties) {
+                                        final ExamService examService) {
         this.examResultsService = examResultsService;
         this.examService = examService;
-        this.properties = properties;
     }
 
     /**
@@ -38,25 +34,16 @@ public class ExamCompletedMessageListener {
      * This method is an external entry-point called when we receive a new exam completion
      * message from our message broker.
      *
-     * NOTE: If this method throws an exception, the message will not be acknowledged, causing
-     * the same examId to be resubmitted to this method.
+     * NOTE: If this method throws an exception, the message will be retried the specified number of times (as dictated
+     * by the {@code retry-amount} property value).  If the number of retries is exceeded, the message will be
+     * acknowledged, logged and discarded.  See {@link tds.exam.results.configuration.messaging.ExamResultsTransmitterMessagingConfiguration}
+     * for details on how the retry/recovery is configured.
      *
      * @param examId The completed exam id
      */
     public void handleMessage(final String examId) {
         LOG.debug("Received completed exam notification for id: {}", examId);
-        if (properties.isRetryOnError()) {
-            processMessage(examId);
-        } else {
-            try {
-                processMessage(examId);
-            } catch (final Exception e) {
-                // Log error, and do not rethrow to prevent ERT from re-processing this same request
-                LOG.error("Error occurred while processing or sending the exam results for examId {}: {}", examId,
-                    e);
-            }
-        }
-
+        processMessage(examId);
     }
 
     private void processMessage(final String examId) {

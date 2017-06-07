@@ -35,7 +35,7 @@ public class ExamCompletedMessageListenerTest {
 
     @Before
     public void setup() {
-        listener = new ExamCompletedMessageListener(mockExamResultsService, mockExamService, mockProperties);
+        listener = new ExamCompletedMessageListener(mockExamResultsService, mockExamService);
     }
 
     @Test

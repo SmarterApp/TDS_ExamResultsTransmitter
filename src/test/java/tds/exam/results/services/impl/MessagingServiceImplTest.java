@@ -78,25 +78,4 @@ public class MessagingServiceImplTest {
         messagingService.sendReportAcknowledgement(examId, tisState);
         verify(mockRabbitTemplate, never()).convertAndSend(eq(TOPIC_EXCHANGE), eq(TOPIC_EXAM_REPORTED), eq(tisState.getExamId()), isA(CorrelationData.class));
     }
-
-    @Test(expected = AmqpException.class)
-    public void shouldRetryThreeTimesThenLogFailure() {
-        final TISState tisState = new TISState.Builder()
-            .withExamId(UUID.randomUUID().toString())
-            .withSuccess(true)
-            .build();
-        final UUID examId = UUID.fromString(tisState.getExamId());
-
-        doThrow(new AmqpException("unit test exception"))
-            .when(mockRabbitTemplate).convertAndSend(eq(TOPIC_EXCHANGE),
-            eq(TOPIC_EXAM_REPORTED),
-            eq(tisState.getExamId()),
-            isA(CorrelationData.class));
-
-        messagingService.sendReportAcknowledgement(examId, tisState);
-        verify(mockRabbitTemplate, times(5)).convertAndSend(eq(TOPIC_EXCHANGE),
-            eq(TOPIC_EXAM_REPORTED),
-            eq(tisState.getExamId()),
-            isA(CorrelationData.class));
-    }
 }
