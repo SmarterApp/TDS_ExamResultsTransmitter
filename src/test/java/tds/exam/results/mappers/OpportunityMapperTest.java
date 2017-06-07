@@ -1,15 +1,6 @@
 package tds.exam.results.mappers;
 
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -25,6 +16,14 @@ import tds.exam.wrapper.ExamPageWrapper;
 import tds.exam.wrapper.ExamSegmentWrapper;
 import tds.session.Session;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,46 +32,23 @@ public class OpportunityMapperTest {
 
     @Test
     public void shouldMapExpandableExamToOpportunity() {
-        Session session = random(Session.class);
-        Assessment assessment = random(Assessment.class);
-        Exam exam = random(Exam.class);
-        List<ExamPage> examPages = randomListOf(5, ExamPage.class);
-        List<ExamAccommodation> examAccommodations = randomListOf(20, ExamAccommodation.class);
-        List<ExamPageWrapper> pageWrappers = mapMockExamPagesAndItems(examPages);
+        final Session session = random(Session.class);
+        final Assessment assessment = random(Assessment.class);
 
-        ExamSegmentWrapper examSegmentWrapper = new ExamSegmentWrapper(
-            ExamSegment.Builder
-                .fromSegment(random(ExamSegment.class))
-                .withSegmentKey("segmentKey1")
-                .withSegmentId("segmentId1")
-                .build(), pageWrappers);
+        final ExpandableExam expandableExam = expandableExam();
+        final Exam exam = expandableExam.getExam();
+        final List<ExamAccommodation> examAccommodations = expandableExam.getExamAccommodations();
+        final ExamSegmentWrapper examSegmentWrapper = expandableExam.getExamSegmentWrappers().get(0);
 
-        Map<UUID, Integer> itemResponseUpdates = new HashMap<>();
-        List<ExamItem> allExamItems = examSegmentWrapper.getExamPages().stream()
-            .flatMap(p -> p.getExamItems().stream())
-            .collect(Collectors.toList());
-
-        for (ExamItem item : allExamItems) {
-            itemResponseUpdates.put(item.getId(), random(Integer.class));
-        }
-
-        ExpandableExam expandableExam = new ExpandableExam.Builder(exam)
-            .withExamSegmentWrappers(Collections.singletonList(examSegmentWrapper))
-            .withExamPages(examPages)
-            .withExamAccommodations(examAccommodations)
-            .withItemResponseUpdates(itemResponseUpdates)
-            .withWindowAttempts(3)
-            .build();
-
-        List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
+        final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
             .map(examItem -> new Item(examItem.getItemKey()))
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
-        List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+        final List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
 
-        TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
+        final TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
 
         assertThat(opportunity).isNotNull();
         assertThat(opportunity.getKey()).isEqualTo(exam.getId().toString());
@@ -142,6 +118,61 @@ public class OpportunityMapperTest {
         }
     }
 
+    @Test
+    public void shouldCapitalizeTheItemScoreStatus() {
+        final Session session = random(Session.class);
+        final Assessment assessment = random(Assessment.class);
+
+        final ExpandableExam expandableExam = expandableExam();
+        final ExamSegmentWrapper examSegmentWrapper = expandableExam.getExamSegmentWrappers().get(0);
+
+        final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
+            .flatMap(p -> p.getExamItems().stream())
+            .map(examItem -> new Item(examItem.getItemKey()))
+            .collect(Collectors.toList());
+
+        assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
+        final List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+
+        final TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
+
+        assertThat(opportunity.getItem().stream()
+            .map(item -> item.getScoreStatus())
+            .collect(Collectors.toList())).isSubsetOf(
+                "NOTSCORED",
+                "SCORED",
+                "NOSCORINGENGINE",
+                "SCORINGERROR",
+                "WAITINGFORMACHINESCORE");
+    }
+
+    @Test
+    public void shouldUseTheContentLevelAsTheStrand() {
+        final Session session = random(Session.class);
+        final Assessment assessment = random(Assessment.class);
+
+        final ExpandableExam expandableExam = expandableExam();
+        final ExamSegmentWrapper examSegmentWrapper = expandableExam.getExamSegmentWrappers().get(0);
+
+        final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
+            .flatMap(p -> p.getExamItems().stream())
+            .map(examItem -> new Item(examItem.getItemKey()))
+            .collect(Collectors.toList());
+
+        assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
+        final List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+
+        final TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
+
+        assertThat(opportunity.getItem().stream()
+            .map(item -> item.getStrand())
+            .collect(Collectors.toList())).isSubsetOf(
+                assessment.getSegments().stream()
+                    .flatMap(segment -> segment.getItems().stream())
+                    .map(assessmentItem -> assessmentItem.getContentLevel())
+                    .collect(Collectors.toList()));
+    }
+
     private List<ExamPageWrapper> mapMockExamPagesAndItems(final List<ExamPage> examPages) {
         List<ExamPageWrapper> pageWrappers = new ArrayList<>();
         // Mock/map the exam page ids from "ExamItems" to actual ExamPages.
@@ -169,5 +200,36 @@ public class OpportunityMapperTest {
         }
 
         return pageWrappers;
+    }
+
+    private ExpandableExam expandableExam() {
+        final Exam exam = random(Exam.class);
+        final List<ExamPage> examPages = randomListOf(5, ExamPage.class);
+        final List<ExamAccommodation> examAccommodations = randomListOf(20, ExamAccommodation.class);
+        final List<ExamPageWrapper> pageWrappers = mapMockExamPagesAndItems(examPages);
+
+        final ExamSegmentWrapper examSegmentWrapper = new ExamSegmentWrapper(
+            ExamSegment.Builder
+                .fromSegment(random(ExamSegment.class))
+                .withSegmentKey("segmentKey1")
+                .withSegmentId("segmentId1")
+                .build(), pageWrappers);
+
+        final Map<UUID, Integer> itemResponseUpdates = new HashMap<>();
+        final List<ExamItem> allExamItems = examSegmentWrapper.getExamPages().stream()
+            .flatMap(p -> p.getExamItems().stream())
+            .collect(Collectors.toList());
+
+        for (final ExamItem item : allExamItems) {
+            itemResponseUpdates.put(item.getId(), random(Integer.class));
+        }
+
+        return new ExpandableExam.Builder(exam)
+            .withExamSegmentWrappers(Collections.singletonList(examSegmentWrapper))
+            .withExamPages(examPages)
+            .withExamAccommodations(examAccommodations)
+            .withItemResponseUpdates(itemResponseUpdates)
+            .withWindowAttempts(3)
+            .build();
     }
 }
