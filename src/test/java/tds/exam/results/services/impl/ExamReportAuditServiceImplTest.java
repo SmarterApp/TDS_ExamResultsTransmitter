@@ -34,7 +34,7 @@ public class ExamReportAuditServiceImplTest {
     }
 
     @Test
-    public void shouldSaveExamReportSuccessful() throws JAXBException {
+    public void shouldSaveExamReportSuccessful() {
         final UUID examId = UUID.randomUUID();
         final TDSReport report = new TDSReport();
         examReportAuditService.insertExamReport(examId, report);

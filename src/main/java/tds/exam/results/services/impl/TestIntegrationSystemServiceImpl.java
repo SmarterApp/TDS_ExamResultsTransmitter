@@ -2,15 +2,14 @@ package tds.exam.results.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tds.exam.results.repositories.TestIntegrationSystemRepository;
+import tds.exam.results.services.TestIntegrationSystemService;
+import tds.exam.results.trt.TDSReport;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.UUID;
-
-import tds.exam.results.repositories.TestIntegrationSystemRepository;
-import tds.exam.results.services.TestIntegrationSystemService;
-import tds.exam.results.trt.TDSReport;
 
 @Service
 public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemService {
@@ -31,8 +30,8 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
             jaxbMarshaller.marshal(report, sw);
             final String reportXml = sw.toString();
             testIntegrationSystemRepository.sendResults(examId, reportXml);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
+        } catch (final JAXBException e) {
+            throw new RuntimeException("Failed to marshall TDSReport into XML", e);
         }
 
     }
