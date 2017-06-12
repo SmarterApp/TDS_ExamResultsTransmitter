@@ -131,7 +131,7 @@ public class OpportunityMapper {
             opportunityItem.setAdminDate(JaxbMapperUtils.convertInstantToGregorianCalendar(examPage.getCreatedAt()));
             opportunityItem.setNumberVisits(itemVisitsMap.get(examItem.getId()));
             opportunityItem.setMimeType(assessmentItem.getMimeType());
-            opportunityItem.setStrand(assessmentItem.getContentLevel());
+            opportunityItem.setStrand(getStrandFromContentLevel(assessmentItem.getContentLevel()));
             opportunityItem.setContentLevel(assessmentItem.getContentLevel());
             opportunityItem.setPageNumber(examPage.getPagePosition());
             opportunityItem.setPageTime((int) examPage.getDuration());
@@ -180,6 +180,14 @@ public class OpportunityMapper {
 
             opportunityItems.add(opportunityItem);
         }
+    }
+
+    private static String getStrandFromContentLevel(final String contentLevel) {
+        if (contentLevel.contains("|")) {
+            return contentLevel.split("\\|")[0];
+        }
+
+        return contentLevel;
     }
 
     private static void mapExamAccommodationsToOpportunity(final List<ExamAccommodation> examAccommodations,

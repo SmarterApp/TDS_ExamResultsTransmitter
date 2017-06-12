@@ -42,7 +42,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -109,6 +113,8 @@ public class OpportunityMapperTest {
             assertThat(item.getBankKey()).isEqualTo(187);
             assertThat(item.getKey()).isGreaterThan(0);
             assertThat(item.getOperational()).isEqualTo((short) 1);
+            assertThat(item.getContentLevel()).isEqualTo("Strand|TL|D-R");
+            assertThat(item.getStrand()).isEqualTo("Strand");
             TDSReport.Opportunity.Item.Response response = item.getResponse();
 
             assertThat(response).isNotNull();
@@ -128,7 +134,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -156,7 +166,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -169,7 +183,7 @@ public class OpportunityMapperTest {
             .collect(Collectors.toList())).isSubsetOf(
                 assessment.getSegments().stream()
                     .flatMap(segment -> segment.getItems().stream())
-                    .map(assessmentItem -> assessmentItem.getContentLevel())
+                    .map(assessmentItem -> "Strand")
                     .collect(Collectors.toList()));
     }
 
