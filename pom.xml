@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <docker.image.prefix>fwsbac</docker.image.prefix>
+        <docker.image.prefix>smarterbalanced</docker.image.prefix>
         <integration-tests.skip>true</integration-tests.skip>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
         <jaxb-maven.version>2.3.1</jaxb-maven.version>
