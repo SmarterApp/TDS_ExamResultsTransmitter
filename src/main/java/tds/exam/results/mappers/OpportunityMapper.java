@@ -182,6 +182,7 @@ public class OpportunityMapper {
         }
     }
 
+    /* Port of ReportingDLL.ItemkeyStrandName_F() */
     private static String getStrandFromContentLevel(final String contentLevel) {
         if (contentLevel.contains("|")) {
             return contentLevel.split("\\|")[0];
