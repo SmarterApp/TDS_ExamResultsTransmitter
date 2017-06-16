@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import tds.exam.ExpandableExam;
 import tds.exam.results.mappers.utils.JaxbMapperUtils;
@@ -23,7 +24,7 @@ public class ExamineeMapper {
     private static final String DOB_ATTRIBUTE_ID = "DOB";
     private static final Logger log = LoggerFactory.getLogger(ExamineeMapper.class);
 
-    private static final ImmutableMap<String, String> attributeNames = ImmutableMap.of(
+    private static final Map<String, String> attributeNames = ImmutableMap.of(
         DOB_ATTRIBUTE_ID, "Birthday",
         "Gender", "Sex",
         "LastName", "LastOrSurname",
