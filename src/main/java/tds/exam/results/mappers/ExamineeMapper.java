@@ -31,6 +31,13 @@ public class ExamineeMapper {
         "SSID", "StudentIdentifier"
     );
 
+    private static final Map<String, String> relationshipNames = ImmutableMap.of(
+        "DistrictID", "ResponsibleDistrictIdentifier",
+        "DistrictName", "OrganizationName",
+        "SchoolID", "ResponsibleInstitutionIdentifier",
+        "SchoolName", "NameOfInstitution"
+    );
+
     public static TDSReport.Examinee mapExaminee(final ExpandableExam expandableExam) {
         TDSReport.Examinee examinee = new TDSReport.Examinee();
         examinee.setKey(expandableExam.getExam().getStudentId());
@@ -38,7 +45,12 @@ public class ExamineeMapper {
 
         expandableExam.getExamineeRelationships().forEach(relationship -> {
             TDSReport.Examinee.ExamineeRelationship reportRelationship = new TDSReport.Examinee.ExamineeRelationship();
-            reportRelationship.setName(relationship.getName());
+            // If there is a translated relationship name, use the translated name - See ReportingDLL - 1967-1972
+            reportRelationship.setName(
+                relationshipNames.containsKey(relationship.getName())
+                    ? relationshipNames.get(relationship.getName())
+                    : relationship.getName()
+            );
             reportRelationship.setValue(relationship.getValue());
             reportRelationship.setContext(Context.fromValue(relationship.getContext().name()));
             reportRelationship.setContextDate(JaxbMapperUtils.convertInstantToGregorianCalendar(relationship.getCreatedAt()));
