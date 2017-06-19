@@ -24,12 +24,16 @@ public class ExamineeMapper {
     private static final String DOB_ATTRIBUTE_ID = "DOB";
     private static final Logger log = LoggerFactory.getLogger(ExamineeMapper.class);
 
-    private static final Map<String, String> attributeNames = ImmutableMap.of(
-        DOB_ATTRIBUTE_ID, "Birthday",
-        "Gender", "Sex",
-        "LastName", "LastOrSurname",
-        "SSID", "StudentIdentifier"
-    );
+    private static final Map<String, String> trtAttributeRelationshipTranslations = ImmutableMap.<String, String>builder()
+        .put(DOB_ATTRIBUTE_ID, "Birthday")
+        .put("Gender", "Sex")
+        .put("LastName", "LastOrSurname")
+        .put("SSID", "StudentIdentifier")
+        .put("DistrictID", "ResponsibleDistrictIdentifier")
+        .put("DistrictName", "OrganizationName")
+        .put("SchoolID", "ResponsibleInstitutionIdentifier")
+        .put("SchoolName", "NameOfInstitution")
+        .build();
 
     public static TDSReport.Examinee mapExaminee(final ExpandableExam expandableExam) {
         TDSReport.Examinee examinee = new TDSReport.Examinee();
@@ -38,7 +42,12 @@ public class ExamineeMapper {
 
         expandableExam.getExamineeRelationships().forEach(relationship -> {
             TDSReport.Examinee.ExamineeRelationship reportRelationship = new TDSReport.Examinee.ExamineeRelationship();
-            reportRelationship.setName(relationship.getName());
+            // If there is a translated relationship name, use the translated name - See ReportingDLL - 1967-1972
+            reportRelationship.setName(
+                trtAttributeRelationshipTranslations.containsKey(relationship.getName())
+                    ? trtAttributeRelationshipTranslations.get(relationship.getName())
+                    : relationship.getName()
+            );
             reportRelationship.setValue(relationship.getValue());
             reportRelationship.setContext(Context.fromValue(relationship.getContext().name()));
             reportRelationship.setContextDate(JaxbMapperUtils.convertInstantToGregorianCalendar(relationship.getCreatedAt()));
@@ -49,8 +58,8 @@ public class ExamineeMapper {
             TDSReport.Examinee.ExamineeAttribute reportAttribute = new TDSReport.Examinee.ExamineeAttribute();
             // If there is a translated attribute name, use the translated name - See ReportingDLL - 1920-1927
             reportAttribute.setName(
-                attributeNames.containsKey(attribute.getName())
-                    ? attributeNames.get(attribute.getName())
+                trtAttributeRelationshipTranslations.containsKey(attribute.getName())
+                    ? trtAttributeRelationshipTranslations.get(attribute.getName())
                     : attribute.getName()
             );
             reportAttribute.setValue(

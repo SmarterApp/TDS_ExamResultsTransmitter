@@ -22,49 +22,13 @@ public class ExamineeMapperTest {
 
     @Test
     public void shouldMapExamineeData() {
-        List<ExamineeAttribute> mockExamineeAttributes = randomListOf(2, ExamineeAttribute.class);
-        mockExamineeAttributes.add(
-            new ExamineeAttribute.Builder()
-                .withExamId(UUID.randomUUID())
-                .withName("DOB")
-                .withValue("10081990")
-                .withContext(ExamineeContext.INITIAL)
-                .withCreatedAt(Instant.now())
-                .build()
-        );
-        mockExamineeAttributes.add(
-            new ExamineeAttribute.Builder()
-                .withExamId(UUID.randomUUID())
-                .withName("Gender")
-                .withValue("M")
-                .withContext(ExamineeContext.INITIAL)
-                .withCreatedAt(Instant.now())
-                .build()
-        );
-        mockExamineeAttributes.add(
-            new ExamineeAttribute.Builder()
-                .withExamId(UUID.randomUUID())
-                .withName("SSID")
-                .withValue("1234567")
-                .withContext(ExamineeContext.INITIAL)
-                .withCreatedAt(Instant.now())
-                .build()
-        );
-        mockExamineeAttributes.add(
-            new ExamineeAttribute.Builder()
-                .withExamId(UUID.randomUUID())
-                .withName("LastName")
-                .withValue("Danzig")
-                .withContext(ExamineeContext.INITIAL)
-                .withCreatedAt(Instant.now())
-                .build()
-        );
-
+        List<ExamineeRelationship> mockExamineeRelationships = getExamineeRelationships();
+        List<ExamineeAttribute> mockExamineeAttributes = getExamineeAttributes();
         ExpandableExam expandableExam = new ExpandableExam.Builder(random(Exam.class))
             .withExamineeAttributes(mockExamineeAttributes)
-            .withExamineeRelationship(randomListOf(2, ExamineeRelationship.class))
+            .withExamineeRelationship(mockExamineeRelationships)
             .build();
-
+        
         TDSReport.Examinee examinee = ExamineeMapper.mapExaminee(expandableExam);
 
         assertThat(examinee.getExamineeAttributeOrExamineeRelationship().size())
@@ -124,5 +88,117 @@ public class ExamineeMapperTest {
                     && ((TDSReport.Examinee.ExamineeAttribute)attrOrRel).getName().equalsIgnoreCase("LastOrSurname"))
                 .findFirst().get();
         assertThat(lastNameAttribute.getValue()).isEqualTo("Danzig");
+
+        TDSReport.Examinee.ExamineeRelationship districtIdAttribute =
+            (TDSReport.Examinee.ExamineeRelationship)examinee.getExamineeAttributeOrExamineeRelationship().stream()
+                .filter(attrOrRel -> attrOrRel instanceof TDSReport.Examinee.ExamineeRelationship
+                    && ((TDSReport.Examinee.ExamineeRelationship)attrOrRel).getName().equalsIgnoreCase("ResponsibleDistrictIdentifier"))
+                .findFirst().get();
+        assertThat(districtIdAttribute.getValue()).isEqualTo("Sweetwater");
+
+        TDSReport.Examinee.ExamineeRelationship districtNameAttribute =
+            (TDSReport.Examinee.ExamineeRelationship)examinee.getExamineeAttributeOrExamineeRelationship().stream()
+                .filter(attrOrRel -> attrOrRel instanceof TDSReport.Examinee.ExamineeRelationship
+                    && ((TDSReport.Examinee.ExamineeRelationship)attrOrRel).getName().equalsIgnoreCase("OrganizationName"))
+                .findFirst().get();
+        assertThat(districtNameAttribute.getValue()).isEqualTo("District 9");
+
+        TDSReport.Examinee.ExamineeRelationship schoolIdRelationship =
+            (TDSReport.Examinee.ExamineeRelationship)examinee.getExamineeAttributeOrExamineeRelationship().stream()
+                .filter(attrOrRel -> attrOrRel instanceof TDSReport.Examinee.ExamineeRelationship
+                    && ((TDSReport.Examinee.ExamineeRelationship)attrOrRel).getName().equalsIgnoreCase("ResponsibleInstitutionIdentifier"))
+                .findFirst().get();
+        assertThat(schoolIdRelationship.getValue()).isEqualTo("Hilltop");
+
+        TDSReport.Examinee.ExamineeRelationship schoolNameRelationship =
+            (TDSReport.Examinee.ExamineeRelationship)examinee.getExamineeAttributeOrExamineeRelationship().stream()
+                .filter(attrOrRel -> attrOrRel instanceof TDSReport.Examinee.ExamineeRelationship
+                    && ((TDSReport.Examinee.ExamineeRelationship)attrOrRel).getName().equalsIgnoreCase("NameOfInstitution"))
+                .findFirst().get();
+        assertThat(schoolNameRelationship.getValue()).isEqualTo("School of Rock");
+
+
+    }
+
+    private List<ExamineeAttribute> getExamineeAttributes() {
+        List<ExamineeAttribute> mockExamineeAttributes = randomListOf(2, ExamineeAttribute.class);
+        mockExamineeAttributes.add(
+            new ExamineeAttribute.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("DOB")
+                .withValue("10081990")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeAttributes.add(
+            new ExamineeAttribute.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("Gender")
+                .withValue("M")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeAttributes.add(
+            new ExamineeAttribute.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("SSID")
+                .withValue("1234567")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeAttributes.add(
+            new ExamineeAttribute.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("LastName")
+                .withValue("Danzig")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        return mockExamineeAttributes;
+    }
+
+    private List<ExamineeRelationship> getExamineeRelationships() {
+        List<ExamineeRelationship> mockExamineeRelationships = randomListOf(2, ExamineeRelationship.class);
+        mockExamineeRelationships.add(
+            new ExamineeRelationship.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("DistrictID")
+                .withValue("Sweetwater")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeRelationships.add(
+            new ExamineeRelationship.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("SchoolName")
+                .withValue("School of Rock")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeRelationships.add(
+            new ExamineeRelationship.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("SchoolID")
+                .withValue("Hilltop")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        mockExamineeRelationships.add(
+            new ExamineeRelationship.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("DistrictName")
+                .withValue("District 9")
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        return mockExamineeRelationships;
     }
 }
