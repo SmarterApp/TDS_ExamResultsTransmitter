@@ -95,6 +95,11 @@ public class ExamineeMapper {
     private static String formatBirthDate(final String dob) {
         DateFormat tdsFormat = new SimpleDateFormat("MMddyyyy");
         DateFormat trtFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if (dob == null) {
+            return DEFAULT_BIRTH_DATE;
+        }
+
         try {
             return trtFormat.format(tdsFormat.parse(dob));
         } catch (ParseException e) {
