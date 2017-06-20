@@ -15,6 +15,7 @@
 package tds.exam.results.mappers;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.method.P;
@@ -93,8 +94,13 @@ public class ExamineeMapper {
         The birthdate is typically formatted "MMDDYYYY" and is expected to be in "YYYY-MM-DD" - ReportingDLL.readTesteeAttributes()
      */
     private static String formatBirthDate(final String dob) {
+        if (StringUtils.isBlank(dob)) {
+            return DEFAULT_BIRTH_DATE;
+        }
+
         DateFormat tdsFormat = new SimpleDateFormat("MMddyyyy");
         DateFormat trtFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         try {
             return trtFormat.format(tdsFormat.parse(dob));
         } catch (ParseException e) {

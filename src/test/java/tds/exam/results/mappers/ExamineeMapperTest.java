@@ -17,6 +17,7 @@ package tds.exam.results.mappers;
 import org.joda.time.Instant;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ExamineeMapperTest {
 
     @Test
+    public void shouldMapExamineeDataNullDOB() {
+        List<ExamineeRelationship> mockExamineeRelationships = getExamineeRelationships();
+        List<ExamineeAttribute> mockExamineeAttributes = Arrays.asList(
+            new ExamineeAttribute.Builder()
+                .withExamId(UUID.randomUUID())
+                .withName("DOB")
+                .withValue(null)
+                .withContext(ExamineeContext.INITIAL)
+                .withCreatedAt(Instant.now())
+                .build()
+        );
+        ExpandableExam expandableExam = new ExpandableExam.Builder(random(Exam.class))
+            .withExamineeAttributes(mockExamineeAttributes)
+            .withExamineeRelationship(mockExamineeRelationships)
+            .build();
+        
+        TDSReport.Examinee examinee = ExamineeMapper.mapExaminee(expandableExam);
+
+        assertThat(examinee.getExamineeAttributeOrExamineeRelationship().size())
+            .isEqualTo(expandableExam.getExamineeRelationships().size() + expandableExam.getExamineeAttributes().size());
+
+        ExamineeAttribute examineeAttribute = expandableExam.getExamineeAttributes().get(0);
+
+        TDSReport.Examinee.ExamineeAttribute dobAttribute;
+
+        for (Object relationshipOrAttribute : examinee.getExamineeAttributeOrExamineeRelationship()) {
+            if (relationshipOrAttribute instanceof TDSReport.Examinee.ExamineeAttribute
+                && ((TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute).getName().equals("Birthday")){
+                dobAttribute = (TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute;
+                assertThat(dobAttribute.getValue()).isEqualTo("1900-01-01");
+                assertThat(dobAttribute.getContext()).isEqualTo(Context.fromValue(examineeAttribute.getContext().name()));
+                assertThat(dobAttribute.getContextDate()).isNotNull();
+            }
+        }
+    }
+
+    @Test
     public void shouldMapExamineeData() {
         List<ExamineeRelationship> mockExamineeRelationships = getExamineeRelationships();
         List<ExamineeAttribute> mockExamineeAttributes = getExamineeAttributes();
@@ -42,7 +80,7 @@ public class ExamineeMapperTest {
             .withExamineeAttributes(mockExamineeAttributes)
             .withExamineeRelationship(mockExamineeRelationships)
             .build();
-        
+
         TDSReport.Examinee examinee = ExamineeMapper.mapExaminee(expandableExam);
 
         assertThat(examinee.getExamineeAttributeOrExamineeRelationship().size())
