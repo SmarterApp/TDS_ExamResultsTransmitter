@@ -63,7 +63,7 @@ public class ExamineeMapperTest {
 
         for (Object relationshipOrAttribute : examinee.getExamineeAttributeOrExamineeRelationship()) {
             if (relationshipOrAttribute instanceof TDSReport.Examinee.ExamineeAttribute
-                && ((TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute).getName().equals("Birthday")){
+                && ((TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute).getName().equals("Birthdate")){
                 dobAttribute = (TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute;
                 assertThat(dobAttribute.getValue()).isEqualTo("1900-01-01");
                 assertThat(dobAttribute.getContext()).isEqualTo(Context.fromValue(examineeAttribute.getContext().name()));
@@ -116,7 +116,7 @@ public class ExamineeMapperTest {
         TDSReport.Examinee.ExamineeAttribute dateAttribute =
             (TDSReport.Examinee.ExamineeAttribute)examinee.getExamineeAttributeOrExamineeRelationship().stream()
                 .filter(attrOrRel -> attrOrRel instanceof TDSReport.Examinee.ExamineeAttribute
-                    && ((TDSReport.Examinee.ExamineeAttribute)attrOrRel).getName().equalsIgnoreCase("Birthday"))
+                    && ((TDSReport.Examinee.ExamineeAttribute)attrOrRel).getName().equalsIgnoreCase("Birthdate"))
                 .findFirst().get();
         assertThat(dateAttribute.getValue()).isEqualTo("1990-10-08");
 

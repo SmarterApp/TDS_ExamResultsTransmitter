@@ -40,7 +40,7 @@ public class ExamineeMapper {
     private static final Logger log = LoggerFactory.getLogger(ExamineeMapper.class);
 
     private static final Map<String, String> trtAttributeRelationshipTranslations = ImmutableMap.<String, String>builder()
-        .put(DOB_ATTRIBUTE_ID, "Birthday")
+        .put(DOB_ATTRIBUTE_ID, "Birthdate")
         .put("Gender", "Sex")
         .put("LastName", "LastOrSurname")
         .put("SSID", "StudentIdentifier")
