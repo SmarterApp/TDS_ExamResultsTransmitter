@@ -25,10 +25,10 @@
         <jaxb-maven.version>2.3.1</jaxb-maven.version>
 
         <!-- TDS Version Props -->
-        <tds-exam-client.version>0.0.21</tds-exam-client.version>
-        <tds-common.version>3.1.0.RELEASE</tds-common.version>
-        <tds-session-client.version>3.1.0.RELEASE</tds-session-client.version>
-        <tds-assessment-client.version>3.1.1</tds-assessment-client.version>
+        <tds-exam-client.version>3.1.1.RELEASE</tds-exam-client.version>
+        <tds-common.version>3.1.1.RELEASE</tds-common.version>
+        <tds-session-client.version>3.1.1.RELEASE</tds-session-client.version>
+        <tds-assessment-client.version>3.1.1.RELEASE</tds-assessment-client.version>
     </properties>
 
     <dependencies>
