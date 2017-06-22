@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2017 Regents of the University of California. Licensed under the Educational
+ * Community License, Version 2.0 (the “license”); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the license at
+ *
+ * https://opensource.org/licenses/ECL-2.0
+ *
+ * Unless required under applicable law or agreed to in writing, software distributed under the
+ * License is distributed in an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for specific language governing permissions
+ * and limitations under the license.
+ *
+ ******************************************************************************/
+
 package tds.exam.results.mappers;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
@@ -131,7 +145,7 @@ public class OpportunityMapper {
             opportunityItem.setAdminDate(JaxbMapperUtils.convertInstantToGregorianCalendar(examPage.getCreatedAt()));
             opportunityItem.setNumberVisits(itemVisitsMap.get(examItem.getId()));
             opportunityItem.setMimeType(assessmentItem.getMimeType());
-            opportunityItem.setStrand(assessmentItem.getContentLevel());
+            opportunityItem.setStrand(getStrandFromContentLevel(assessmentItem.getContentLevel()));
             opportunityItem.setContentLevel(assessmentItem.getContentLevel());
             opportunityItem.setPageNumber(examPage.getPagePosition());
             opportunityItem.setPageTime((int) examPage.getDuration());
@@ -180,6 +194,15 @@ public class OpportunityMapper {
 
             opportunityItems.add(opportunityItem);
         }
+    }
+
+    /* Port of ReportingDLL.ItemkeyStrandName_F() */
+    private static String getStrandFromContentLevel(final String contentLevel) {
+        if (contentLevel.contains("|")) {
+            return contentLevel.split("\\|")[0];
+        }
+
+        return contentLevel;
     }
 
     private static void mapExamAccommodationsToOpportunity(final List<ExamAccommodation> examAccommodations,
