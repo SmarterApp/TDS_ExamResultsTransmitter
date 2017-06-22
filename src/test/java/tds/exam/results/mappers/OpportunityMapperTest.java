@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2017 Regents of the University of California. Licensed under the Educational
+ * Community License, Version 2.0 (the “license”); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the license at
+ *
+ * https://opensource.org/licenses/ECL-2.0
+ *
+ * Unless required under applicable law or agreed to in writing, software distributed under the
+ * License is distributed in an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for specific language governing permissions
+ * and limitations under the license.
+ *
+ ******************************************************************************/
+
 package tds.exam.results.mappers;
 
 import org.junit.Test;
@@ -42,7 +56,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -109,6 +127,8 @@ public class OpportunityMapperTest {
             assertThat(item.getBankKey()).isEqualTo(187);
             assertThat(item.getKey()).isGreaterThan(0);
             assertThat(item.getOperational()).isEqualTo((short) 1);
+            assertThat(item.getContentLevel()).isEqualTo("Strand|TL|D-R");
+            assertThat(item.getStrand()).isEqualTo("Strand");
             TDSReport.Opportunity.Item.Response response = item.getResponse();
 
             assertThat(response).isNotNull();
@@ -128,7 +148,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -156,7 +180,11 @@ public class OpportunityMapperTest {
 
         final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
             .flatMap(p -> p.getExamItems().stream())
-            .map(examItem -> new Item(examItem.getItemKey()))
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
             .collect(Collectors.toList());
 
         assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
@@ -169,7 +197,7 @@ public class OpportunityMapperTest {
             .collect(Collectors.toList())).isSubsetOf(
                 assessment.getSegments().stream()
                     .flatMap(segment -> segment.getItems().stream())
-                    .map(assessmentItem -> assessmentItem.getContentLevel())
+                    .map(assessmentItem -> "Strand")
                     .collect(Collectors.toList()));
     }
 
