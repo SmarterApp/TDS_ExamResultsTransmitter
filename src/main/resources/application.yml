@@ -10,7 +10,7 @@ spring:
   rabbitmq:
     port: 32846
   datasource:
-    url: ${sbac.jdbc.host}/exam_audit
+    jdbcUrl: ${sbac.jdbc.host}/exam_audit
     username: ${sbac.jdbc.user}
     password: ${sbac.jdbc.password}
     type: com.zaxxer.hikari.HikariDataSource
@@ -50,7 +50,7 @@ server:
 exam-results-transmitter-service:
   session-url: http://localhost:32842
   assessment-url: http://localhost:32841
-  exam-url: http://localhost:80
+  exam-url: http://localhost:8081
   tis-url: ${sbac.tis.url}
   tis-callback-url: ${sbac.tis.callback.url}
   validate-trt-xml: false
