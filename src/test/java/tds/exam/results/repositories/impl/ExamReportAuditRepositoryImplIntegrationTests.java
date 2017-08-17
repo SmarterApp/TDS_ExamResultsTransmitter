@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.model.ExamReport;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,14 +50,14 @@ public class ExamReportAuditRepositoryImplIntegrationTests {
     public void shouldInsertExamReport() {
         final UUID examId = UUID.randomUUID();
         final String report = "tds report";
-        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.RECEIVED);
-        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.SENT);
+        examReportAuditRepository.insertExamReport(examId, report, ExamReportStatus.RECEIVED);
+        examReportAuditRepository.insertExamReport(examId, report, ExamReportStatus.SENT);
 
         Optional<ExamReport> maybeReport = examReportAuditRepository.findLatestExamReport(examId);
 
         ExamReport examReport = maybeReport.get();
         assertThat(examReport.getReportXml()).isEqualTo(report);
-        assertThat(examReport.getStatus()).isEqualTo(ReportStatus.SENT);
+        assertThat(examReport.getStatus()).isEqualTo(ExamReportStatus.SENT);
         assertThat(examReport.getExamId()).isEqualTo(examId);
     }
 }

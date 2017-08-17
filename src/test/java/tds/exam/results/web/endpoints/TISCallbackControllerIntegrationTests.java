@@ -32,7 +32,7 @@ import java.util.UUID;
 
 import tds.common.configuration.SecurityConfiguration;
 import tds.common.web.advice.ExceptionAdvice;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.MessagingService;
 import tds.exam.results.tis.TISState;
@@ -78,7 +78,7 @@ public class TISCallbackControllerIntegrationTests {
             .andExpect(status().isOk());
 
         verify(mockMessagingService).sendReportAcknowledgement(eq(examId), isA(TISState.class));
-        verify(mockExamReportAuditService).updateExamReportStatus(examId, ReportStatus.PROCESSED);
+        verify(mockExamReportAuditService).updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
     }
 
 

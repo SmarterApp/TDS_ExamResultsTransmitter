@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.model.ExamReport;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 
 /**
  * Repository for interacting with the exam
@@ -29,9 +29,9 @@ public interface ExamReportAuditRepository {
      *
      * @param examId        The id of the exam being reported
      * @param examReportXml The XML blob of the TRT report
-     * @param reportStatus the status of the report
+     * @param examReportStatus the status of the report
      */
-    void insertExamReport(final UUID examId, final String examReportXml, ReportStatus reportStatus);
+    void insertExamReport(final UUID examId, final String examReportXml, ExamReportStatus examReportStatus);
 
     Optional<ExamReport> findLatestExamReport(final UUID examId);
 }

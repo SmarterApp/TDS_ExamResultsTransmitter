@@ -30,7 +30,7 @@ import tds.exam.results.mappers.CommentMapper;
 import tds.exam.results.mappers.ExamineeMapper;
 import tds.exam.results.mappers.OpportunityMapper;
 import tds.exam.results.mappers.TestMapper;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.AssessmentService;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
@@ -90,9 +90,9 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         CommentMapper.mapComments(report.getComment(), expandableExam);
 
         tdsReportValidator.validateReport(report);
-        examReportAuditService.insertExamReport(examId, report, ReportStatus.RECEIVED);
+        examReportAuditService.insertExamReport(examId, report, ExamReportStatus.RECEIVED);
         testIntegrationSystemService.sendResults(examId, report);
-        examReportAuditService.insertExamReport(examId, report, ReportStatus.SENT);
+        examReportAuditService.insertExamReport(examId, report, ExamReportStatus.SENT);
     }
 
 }

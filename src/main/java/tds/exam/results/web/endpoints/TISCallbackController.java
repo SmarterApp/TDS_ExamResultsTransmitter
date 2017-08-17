@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.MessagingService;
 import tds.exam.results.tis.TISState;
@@ -53,7 +53,7 @@ public class TISCallbackController {
         just to update the status
         */
         try {
-            examReportAuditService.updateExamReportStatus(examId, ReportStatus.PROCESSED);
+            examReportAuditService.updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
         } catch (final Exception e) {
             LOG.error(String.format("Failed to update the report status for %s to processed due to exception", examId), e);
         }

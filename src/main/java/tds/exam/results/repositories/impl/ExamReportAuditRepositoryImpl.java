@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.model.ExamReport;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
 import static tds.common.data.mapping.ResultSetMapperUtility.mapInstantToTimestamp;
@@ -44,7 +44,7 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final String examReportXml, final ReportStatus status) {
+    public void insertExamReport(final UUID examId, final String examReportXml, final ExamReportStatus status) {
         final SqlParameterSource parameters = new MapSqlParameterSource("examId", examId.toString())
             .addValue("examReportXml", examReportXml)
             .addValue("createdAt", mapInstantToTimestamp(Instant.now()))
@@ -90,7 +90,7 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
                 public ExamReport mapRow(final ResultSet rs, final int i) throws SQLException {
                     return new ExamReport(
                         rs.getString("report"),
-                        ReportStatus.fromValue(rs.getString("status")),
+                        ExamReportStatus.fromValue(rs.getString("status")),
                         UUID.fromString(rs.getString("exam_id"))
                     );
                 }

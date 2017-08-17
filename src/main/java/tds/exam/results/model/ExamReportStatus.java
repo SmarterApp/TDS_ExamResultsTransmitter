@@ -13,14 +13,14 @@
  ******************************************************************************/
 package tds.exam.results.model;
 
-public enum ReportStatus {
+public enum ExamReportStatus {
     RECEIVED("received"),
     SENT("sent"),
     PROCESSED("processed");
 
     private final String value;
 
-    ReportStatus(String type) {
+    ExamReportStatus(String type) {
         this.value = type;
     }
 
@@ -30,10 +30,10 @@ public enum ReportStatus {
 
     /**
      * @param type the string value for the status
-     * @return the equivalent {@link tds.exam.results.model.ReportStatus}
+     * @return the equivalent {@link ExamReportStatus}
      */
-    public static ReportStatus fromValue(String type) {
-        for (ReportStatus status : ReportStatus.values()) {
+    public static ExamReportStatus fromValue(String type) {
+        for (ExamReportStatus status : ExamReportStatus.values()) {
             if (status.getValue().equals(type)) {
                 return status;
             }

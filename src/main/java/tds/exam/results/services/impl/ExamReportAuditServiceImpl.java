@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import tds.common.web.exceptions.NotFoundException;
 import tds.exam.results.model.ExamReport;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.trt.TDSReport;
@@ -44,7 +44,7 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final TDSReport report, final ReportStatus status) {
+    public void insertExamReport(final UUID examId, final TDSReport report, final ExamReportStatus status) {
         final StringWriter sw = new StringWriter();
 
         try {
@@ -56,7 +56,7 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
     }
 
     @Override
-    public void updateExamReportStatus(final UUID examId, final ReportStatus statusUpdate) {
+    public void updateExamReportStatus(final UUID examId, final ExamReportStatus statusUpdate) {
         Optional<ExamReport> maybeExamReport = examReportAuditRepository.findLatestExamReport(examId);
 
         if(!maybeExamReport.isPresent()) {

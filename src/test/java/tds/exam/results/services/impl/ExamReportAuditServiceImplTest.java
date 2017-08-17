@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import tds.common.web.exceptions.NotFoundException;
 import tds.exam.results.model.ExamReport;
-import tds.exam.results.model.ReportStatus;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.trt.TDSReport;
@@ -61,9 +61,9 @@ public class ExamReportAuditServiceImplTest {
         final TDSReport report = new TDSReport();
 
         ArgumentCaptor<String> trtCaptor = ArgumentCaptor.forClass(String.class);
-        examReportAuditService.insertExamReport(examId, report, ReportStatus.RECEIVED);
+        examReportAuditService.insertExamReport(examId, report, ExamReportStatus.RECEIVED);
 
-        verify(mockExamReportAuditRepository).insertExamReport(eq(examId), trtCaptor.capture(), eq(ReportStatus.RECEIVED));
+        verify(mockExamReportAuditRepository).insertExamReport(eq(examId), trtCaptor.capture(), eq(ExamReportStatus.RECEIVED));
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(report, sw);
@@ -74,12 +74,12 @@ public class ExamReportAuditServiceImplTest {
     @Test
     public void shouldUpdateExamStatusIfFound() {
         final UUID examId = UUID.randomUUID();
-        ExamReport examReport = new ExamReport("xml", ReportStatus.RECEIVED, examId);
+        ExamReport examReport = new ExamReport("xml", ExamReportStatus.RECEIVED, examId);
         when(mockExamReportAuditRepository.findLatestExamReport(examId)).thenReturn(Optional.of(examReport));
 
-        examReportAuditService.updateExamReportStatus(examId, ReportStatus.PROCESSED);
+        examReportAuditService.updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
 
-        verify(mockExamReportAuditRepository).insertExamReport(examId, examReport.getReportXml(), ReportStatus.PROCESSED);
+        verify(mockExamReportAuditRepository).insertExamReport(examId, examReport.getReportXml(), ExamReportStatus.PROCESSED);
     }
 
     @Test(expected = NotFoundException.class)
@@ -87,7 +87,7 @@ public class ExamReportAuditServiceImplTest {
         final UUID examId = UUID.randomUUID();
         when(mockExamReportAuditRepository.findLatestExamReport(examId)).thenReturn(Optional.empty());
 
-        examReportAuditService.updateExamReportStatus(examId, ReportStatus.PROCESSED);
+        examReportAuditService.updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
     }
 
     private Marshaller createMarshaller() throws JAXBException {
