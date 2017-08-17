@@ -19,20 +19,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.exam.Exam;
 import tds.exam.ExpandableExam;
-import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.mappers.CommentMapper;
 import tds.exam.results.mappers.ExamineeMapper;
 import tds.exam.results.mappers.OpportunityMapper;
 import tds.exam.results.mappers.TestMapper;
+import tds.exam.results.model.ReportStatus;
 import tds.exam.results.services.AssessmentService;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
@@ -92,8 +90,9 @@ public class ExamResultsServiceImpl implements ExamResultsService {
         CommentMapper.mapComments(report.getComment(), expandableExam);
 
         tdsReportValidator.validateReport(report);
+        examReportAuditService.insertExamReport(examId, report, ReportStatus.RECEIVED);
         testIntegrationSystemService.sendResults(examId, report);
-        examReportAuditService.insertExamReport(examId, report);
+        examReportAuditService.insertExamReport(examId, report, ReportStatus.SENT);
     }
 
 }

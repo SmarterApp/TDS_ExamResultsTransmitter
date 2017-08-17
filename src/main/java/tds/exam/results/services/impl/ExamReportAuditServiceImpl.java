@@ -16,14 +16,16 @@ package tds.exam.results.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tds.exam.results.repositories.ExamReportAuditRepository;
-import tds.exam.results.services.ExamReportAuditService;
-import tds.exam.results.trt.TDSReport;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.UUID;
+
+import tds.exam.results.model.ReportStatus;
+import tds.exam.results.repositories.ExamReportAuditRepository;
+import tds.exam.results.services.ExamReportAuditService;
+import tds.exam.results.trt.TDSReport;
 
 @Service
 public class ExamReportAuditServiceImpl implements ExamReportAuditService {
@@ -38,16 +40,14 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final TDSReport report) {
+    public void insertExamReport(final UUID examId, final TDSReport report, final ReportStatus status) {
         final StringWriter sw = new StringWriter();
 
         try {
             jaxbMarshaller.marshal(report, sw);
-            final String reportXml = sw.toString();
-            examReportAuditRepository.insertExamReport(examId, reportXml);
+            examReportAuditRepository.insertExamReport(examId, sw.toString(), status);
         } catch (final JAXBException e) {
             throw new RuntimeException("Failed to marshall TDSReport into XML", e);
         }
-
     }
 }

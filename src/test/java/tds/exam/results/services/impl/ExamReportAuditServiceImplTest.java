@@ -17,18 +17,22 @@ package tds.exam.results.services.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.util.UUID;
 
+import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.trt.TDSReport;
 
-import static org.mockito.Matchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -39,19 +43,34 @@ public class ExamReportAuditServiceImplTest {
     @Mock
     private ExamReportAuditRepository mockExamReportAuditRepository;
 
-    @Mock
-    private Marshaller mockMarshaller;
+    private Marshaller marshaller;
 
     @Before
     public void setUp() throws JAXBException {
-        examReportAuditService = new ExamReportAuditServiceImpl(mockExamReportAuditRepository, mockMarshaller);
+        marshaller = createMarshaller();
+        examReportAuditService = new ExamReportAuditServiceImpl(mockExamReportAuditRepository, marshaller);
     }
 
     @Test
-    public void shouldSaveExamReportSuccessful() {
+    public void shouldSaveExamReportSuccessful() throws JAXBException {
         final UUID examId = UUID.randomUUID();
         final TDSReport report = new TDSReport();
-        examReportAuditService.insertExamReport(examId, report);
-        verify(mockExamReportAuditRepository).insertExamReport(eq(examId), any());
+
+        ArgumentCaptor<String> trtCaptor = ArgumentCaptor.forClass(String.class);
+        examReportAuditService.insertExamReport(examId, report, ReportStatus.RECEIVED);
+
+        verify(mockExamReportAuditRepository).insertExamReport(eq(examId), trtCaptor.capture(), eq(ReportStatus.RECEIVED));
+
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(report, sw);
+
+        assertThat(trtCaptor.getValue()).isEqualTo(sw.toString());
+    }
+
+    private Marshaller createMarshaller() throws JAXBException {
+        JAXBContext contextObj = JAXBContext.newInstance(TDSReport.class);
+        Marshaller marshallerObj = contextObj.createMarshaller();
+        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        return contextObj.createMarshaller();
     }
 }

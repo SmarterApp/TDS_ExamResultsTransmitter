@@ -10,6 +10,6 @@ USE exam_audit;
 ALTER TABLE exam_report add column status VARCHAR(100);
 
 UPDATE exam_report
-SET status = 'sent previously';
+SET status = 'sent';
 
 ALTER TABLE exam_report MODIFY COLUMN status VARCHAR(100) NOT NULL;

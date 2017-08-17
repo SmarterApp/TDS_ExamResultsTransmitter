@@ -16,6 +16,8 @@ package tds.exam.results.repositories;
 
 import java.util.UUID;
 
+import tds.exam.results.model.ReportStatus;
+
 /**
  * Repository for interacting with the exam
  */
@@ -25,6 +27,7 @@ public interface ExamReportAuditRepository {
      *
      * @param examId        The id of the exam being reported
      * @param examReportXml The XML blob of the TRT report
+     * @param reportStatus the status of the report
      */
-    void insertExamReport(final UUID examId, final String examReportXml);
+    void insertExamReport(final UUID examId, final String examReportXml, ReportStatus reportStatus);
 }

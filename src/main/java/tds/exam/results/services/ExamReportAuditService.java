@@ -14,9 +14,10 @@
 
 package tds.exam.results.services;
 
-import tds.exam.results.trt.TDSReport;
-
 import java.util.UUID;
+
+import tds.exam.results.model.ReportStatus;
+import tds.exam.results.trt.TDSReport;
 
 /**
  * A service for exam report auditing
@@ -27,6 +28,7 @@ public interface ExamReportAuditService {
      *
      * @param examId The exam id of the TRT
      * @param report The {@link tds.exam.results.trt.TDSReport} TRT jaxb object
+     * @param status the {@link tds.exam.results.model.ReportStatus} of the report
      */
-    void insertExamReport(final UUID examId, final TDSReport report);
+    void insertExamReport(final UUID examId, final TDSReport report, ReportStatus status);
 }

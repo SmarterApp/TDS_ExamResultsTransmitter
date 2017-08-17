@@ -15,7 +15,6 @@
 package tds.exam.results.repositories.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.UUID;
 
+import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
 import static tds.common.data.mapping.ResultSetMapperUtility.mapInstantToTimestamp;
@@ -38,10 +38,11 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final String examReportXml) {
+    public void insertExamReport(final UUID examId, final String examReportXml, final ReportStatus status) {
         final SqlParameterSource parameters = new MapSqlParameterSource("examId", examId.toString())
             .addValue("examReportXml", examReportXml)
-            .addValue("createdAt", mapInstantToTimestamp(Instant.now()));
+            .addValue("createdAt", mapInstantToTimestamp(Instant.now()))
+            .addValue("status", status.getValue());
 
         final String SQL =
             "INSERT INTO \n" +
@@ -49,10 +50,12 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
                 "( \n" +
                 "   exam_id, \n" +
                 "   report, \n" +
+                "   status, \n" +
                 "   created_at \n" +
                 ") VALUES ( \n" +
                 "   :examId, \n" +
                 "   :examReportXml, \n" +
+                "   :status, \n" +
                 "   :createdAt \n" +
                 ")";
 

@@ -24,8 +24,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
+import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,11 +50,12 @@ public class ExamReportAuditRepositoryImplIntegrationTests {
     public void shouldInsertExamReport() {
         final UUID examId = UUID.randomUUID();
         final String report = "tds report";
-        examReportAuditRepository.insertExamReport(examId, report);
+        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.PROCESSED);
 
-        final String reportXml = jdbcTemplate.queryForObject("SELECT report FROM exam_report WHERE exam_id = :examId",
-            new MapSqlParameterSource("examId", examId.toString()), String.class);
+        final Map<String,Object> results = jdbcTemplate.queryForMap("SELECT report, status FROM exam_report WHERE exam_id = :examId",
+            new MapSqlParameterSource("examId", examId.toString()));
 
-        assertThat(reportXml).isEqualTo(report);
+        assertThat(results.get("report")).isEqualTo(report);
+        assertThat(results.get("status").toString()).isEqualTo(ReportStatus.PROCESSED.getValue());
     }
 }
