@@ -20,10 +20,10 @@ import java.util.UUID;
  */
 public class ExamReport {
     private final String reportXml;
-    private final ReportStatus status;
+    private final ExamReportStatus status;
     private final UUID examId;
 
-    public ExamReport(final String reportXml, final ReportStatus status, final UUID examId) {
+    public ExamReport(final String reportXml, final ExamReportStatus status, final UUID examId) {
         this.reportXml = reportXml;
         this.status = status;
         this.examId = examId;
@@ -37,9 +37,9 @@ public class ExamReport {
     }
 
     /**
-     * @return the current {@link tds.exam.results.model.ReportStatus}
+     * @return the current {@link ExamReportStatus}
      */
-    public ReportStatus getStatus() {
+    public ExamReportStatus getStatus() {
         return status;
     }
 
