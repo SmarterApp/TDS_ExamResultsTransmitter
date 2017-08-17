@@ -20,6 +20,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -32,6 +41,7 @@ import tds.exam.ExamineeAttribute;
 import tds.exam.ExamineeNote;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.AssessmentService;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.ExamResultsService;
@@ -43,18 +53,9 @@ import tds.exam.results.validation.TDSReportValidator;
 import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
 
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,8 +134,9 @@ public class ExamResultsServiceImplTest {
         verify(mockExamService).findExpandableExam(exam.getId());
         verify(mockAssessmentService).findAssessment(exam.getClientName(), exam.getAssessmentKey());
         verify(mockSessionService).findSessionById(exam.getSessionId());
-        verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), any());
-        verify(mockTestIntegrationSystemService).sendResults(eq(exam.getId()), any());
+        verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), eq(report), eq(ExamReportStatus.RECEIVED));
+        verify(mockExamReportAuditService).insertExamReport(eq(exam.getId()), eq(report), eq(ExamReportStatus.SENT));
+        verify(mockTestIntegrationSystemService).sendResults(eq(exam.getId()), eq(report));
         verify(mockSessionService).findExternalSessionConfigurationByClientName(exam.getClientName());
         verify(mockAssessmentService).findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId() < 0, configuration);
         // NOTE: Actual mapping logic unit test coverage will be in each individual Mapper class
@@ -149,7 +151,7 @@ public class ExamResultsServiceImplTest {
         // Mock/map the exam page ids from "ExamItems" to actual ExamPages.
         for (int i = 1; i < 10; i++) {
             ExamPage page = examPages.get(i);
-            examPages.set(i, new ExamPage.Builder()
+            examPages.set(i, ExamPage.Builder
                 .fromExamPage(page)
                 .withId(UUID.randomUUID())
                 .build());
