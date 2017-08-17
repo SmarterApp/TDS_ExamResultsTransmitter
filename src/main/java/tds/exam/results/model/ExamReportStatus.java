@@ -39,7 +39,6 @@ public enum ExamReportStatus {
             }
         }
 
-
         throw new IllegalArgumentException(String.format("Could not find ReportStatus for %s", type));
     }
 }

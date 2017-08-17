@@ -38,7 +38,7 @@ public class TISCallbackController {
     private final ExamReportAuditService examReportAuditService;
 
     @Autowired
-    public TISCallbackController(final MessagingService messagingService, ExamReportAuditService examReportAuditService) {
+    public TISCallbackController(final MessagingService messagingService, final ExamReportAuditService examReportAuditService) {
         this.messagingService = messagingService;
         this.examReportAuditService = examReportAuditService;
     }

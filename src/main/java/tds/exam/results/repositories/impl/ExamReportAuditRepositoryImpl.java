@@ -16,14 +16,11 @@ package tds.exam.results.repositories.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,16 +82,11 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
         Optional<ExamReport> maybeExamReport;
 
         try {
-            maybeExamReport = Optional.of(jdbcTemplate.queryForObject(SQL, parameters, new RowMapper<ExamReport>() {
-                @Override
-                public ExamReport mapRow(final ResultSet rs, final int i) throws SQLException {
-                    return new ExamReport(
-                        rs.getString("report"),
-                        ExamReportStatus.fromValue(rs.getString("status")),
-                        UUID.fromString(rs.getString("exam_id"))
-                    );
-                }
-            }));
+            maybeExamReport = Optional.of(jdbcTemplate.queryForObject(SQL, parameters, (rs, i) -> new ExamReport(
+                rs.getString("report"),
+                ExamReportStatus.fromValue(rs.getString("status")),
+                UUID.fromString(rs.getString("exam_id"))
+            )));
         } catch (EmptyResultDataAccessException e) {
             maybeExamReport = Optional.empty();
         }
