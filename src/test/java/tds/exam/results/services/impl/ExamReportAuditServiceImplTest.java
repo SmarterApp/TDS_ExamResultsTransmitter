@@ -25,8 +25,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.Optional;
 import java.util.UUID;
 
+import tds.common.web.exceptions.NotFoundException;
+import tds.exam.results.model.ExamReport;
 import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
@@ -35,6 +38,7 @@ import tds.exam.results.trt.TDSReport;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamReportAuditServiceImplTest {
@@ -65,6 +69,25 @@ public class ExamReportAuditServiceImplTest {
         marshaller.marshal(report, sw);
 
         assertThat(trtCaptor.getValue()).isEqualTo(sw.toString());
+    }
+
+    @Test
+    public void shouldUpdateExamStatusIfFound() {
+        final UUID examId = UUID.randomUUID();
+        ExamReport examReport = new ExamReport("xml", ReportStatus.RECEIVED, examId);
+        when(mockExamReportAuditRepository.findLatestExamReport(examId)).thenReturn(Optional.of(examReport));
+
+        examReportAuditService.updateExamReportStatus(examId, ReportStatus.PROCESSED);
+
+        verify(mockExamReportAuditRepository).insertExamReport(examId, examReport.getReportXml(), ReportStatus.PROCESSED);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowIfStatusCannotBeFound() {
+        final UUID examId = UUID.randomUUID();
+        when(mockExamReportAuditRepository.findLatestExamReport(examId)).thenReturn(Optional.empty());
+
+        examReportAuditService.updateExamReportStatus(examId, ReportStatus.PROCESSED);
     }
 
     private Marshaller createMarshaller() throws JAXBException {

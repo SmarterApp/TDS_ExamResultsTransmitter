@@ -14,8 +14,10 @@
 
 package tds.exam.results.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import tds.exam.results.model.ExamReport;
 import tds.exam.results.model.ReportStatus;
 
 /**
@@ -30,4 +32,6 @@ public interface ExamReportAuditRepository {
      * @param reportStatus the status of the report
      */
     void insertExamReport(final UUID examId, final String examReportXml, ReportStatus reportStatus);
+
+    Optional<ExamReport> findLatestExamReport(final UUID examId);
 }

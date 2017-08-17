@@ -13,33 +13,41 @@
  ******************************************************************************/
 package tds.exam.results.model;
 
-public enum ReportStatus {
-    RECEIVED("received"),
-    SENT("sent"),
-    PROCESSED("processed");
+import java.util.UUID;
 
-    private final String value;
+/**
+ * Represents an Exam Report
+ */
+public class ExamReport {
+    private final String reportXml;
+    private final ReportStatus status;
+    private final UUID examId;
 
-    ReportStatus(String type) {
-        this.value = type;
-    }
-
-    public String getValue() {
-        return value;
+    public ExamReport(final String reportXml, final ReportStatus status, final UUID examId) {
+        this.reportXml = reportXml;
+        this.status = status;
+        this.examId = examId;
     }
 
     /**
-     * @param type the string value for the status
-     * @return the equivalent {@link tds.exam.results.model.ReportStatus}
+     * @return the report XML representing the string version of a {@link tds.exam.results.trt.TDSReport}
      */
-    public static ReportStatus fromValue(String type) {
-        for (ReportStatus status : ReportStatus.values()) {
-            if (status.getValue().equals(type)) {
-                return status;
-            }
-        }
+    public String getReportXml() {
+        return reportXml;
+    }
+
+    /**
+     * @return the current {@link tds.exam.results.model.ReportStatus}
+     */
+    public ReportStatus getStatus() {
+        return status;
+    }
 
 
-        throw new IllegalArgumentException(String.format("Could not find ReportStatus for %s", type));
+    /**
+     * @return the associated exam id
+     */
+    public UUID getExamId() {
+        return examId;
     }
 }

@@ -14,14 +14,18 @@
 
 package tds.exam.results.services.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.Optional;
 import java.util.UUID;
 
+import tds.common.web.exceptions.NotFoundException;
+import tds.exam.results.model.ExamReport;
 import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
@@ -49,5 +53,17 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
         } catch (final JAXBException e) {
             throw new RuntimeException("Failed to marshall TDSReport into XML", e);
         }
+    }
+
+    @Override
+    public void updateExamReportStatus(final UUID examId, final ReportStatus statusUpdate) {
+        Optional<ExamReport> maybeExamReport = examReportAuditRepository.findLatestExamReport(examId);
+
+        if(!maybeExamReport.isPresent()) {
+            throw new NotFoundException("Could not find report for %s", examId);
+        }
+
+        ExamReport report = maybeExamReport.get();
+        examReportAuditRepository.insertExamReport(report.getExamId(), report.getReportXml(), statusUpdate);
     }
 }

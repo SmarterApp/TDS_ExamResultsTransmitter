@@ -19,14 +19,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import tds.exam.results.model.ExamReport;
 import tds.exam.results.model.ReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
@@ -50,12 +50,14 @@ public class ExamReportAuditRepositoryImplIntegrationTests {
     public void shouldInsertExamReport() {
         final UUID examId = UUID.randomUUID();
         final String report = "tds report";
-        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.PROCESSED);
+        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.RECEIVED);
+        examReportAuditRepository.insertExamReport(examId, report, ReportStatus.SENT);
 
-        final Map<String,Object> results = jdbcTemplate.queryForMap("SELECT report, status FROM exam_report WHERE exam_id = :examId",
-            new MapSqlParameterSource("examId", examId.toString()));
+        Optional<ExamReport> maybeReport = examReportAuditRepository.findLatestExamReport(examId);
 
-        assertThat(results.get("report")).isEqualTo(report);
-        assertThat(results.get("status").toString()).isEqualTo(ReportStatus.PROCESSED.getValue());
+        ExamReport examReport = maybeReport.get();
+        assertThat(examReport.getReportXml()).isEqualTo(report);
+        assertThat(examReport.getStatus()).isEqualTo(ReportStatus.SENT);
+        assertThat(examReport.getExamId()).isEqualTo(examId);
     }
 }

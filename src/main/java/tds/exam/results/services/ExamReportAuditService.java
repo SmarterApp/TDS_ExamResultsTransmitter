@@ -30,5 +30,12 @@ public interface ExamReportAuditService {
      * @param report The {@link tds.exam.results.trt.TDSReport} TRT jaxb object
      * @param status the {@link tds.exam.results.model.ReportStatus} of the report
      */
-    void insertExamReport(final UUID examId, final TDSReport report, ReportStatus status);
+    void insertExamReport(final UUID examId, final TDSReport report, final ReportStatus status);
+
+    /**
+     * Update the exam report status
+     * @param examId exam id for the report status
+     * @param statusUpdate the {@link tds.exam.results.model.ReportStatus}
+     */
+    void updateExamReportStatus(final UUID examId, final ReportStatus statusUpdate);
 }
