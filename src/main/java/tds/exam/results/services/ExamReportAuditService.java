@@ -34,7 +34,8 @@ public interface ExamReportAuditService {
 
     /**
      * Update the exam report status
-     * @param examId exam id for the report status
+     *
+     * @param examId       exam id for the report status
      * @param statusUpdate the {@link tds.exam.results.model.ExamReportStatus}
      */
     void updateExamReportStatus(final UUID examId, final ExamReportStatus statusUpdate);
