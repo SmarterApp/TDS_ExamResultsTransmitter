@@ -15,15 +15,18 @@
 package tds.exam.results.repositories.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
+import tds.exam.results.model.ExamReport;
+import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 
 import static tds.common.data.mapping.ResultSetMapperUtility.mapInstantToTimestamp;
@@ -38,10 +41,11 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final String examReportXml) {
+    public void insertExamReport(final UUID examId, final String examReportXml, final ExamReportStatus status) {
         final SqlParameterSource parameters = new MapSqlParameterSource("examId", examId.toString())
             .addValue("examReportXml", examReportXml)
-            .addValue("createdAt", mapInstantToTimestamp(Instant.now()));
+            .addValue("createdAt", mapInstantToTimestamp(Instant.now()))
+            .addValue("status", status.getValue());
 
         final String SQL =
             "INSERT INTO \n" +
@@ -49,13 +53,44 @@ public class ExamReportAuditRepositoryImpl implements ExamReportAuditRepository 
                 "( \n" +
                 "   exam_id, \n" +
                 "   report, \n" +
+                "   status, \n" +
                 "   created_at \n" +
                 ") VALUES ( \n" +
                 "   :examId, \n" +
                 "   :examReportXml, \n" +
+                "   :status, \n" +
                 "   :createdAt \n" +
                 ")";
 
         jdbcTemplate.update(SQL, parameters);
+    }
+
+    @Override
+    public Optional<ExamReport> findLatestExamReport(final UUID examId) {
+        final SqlParameterSource parameters = new MapSqlParameterSource("examId", examId.toString());
+
+        final String SQL = "SELECT \n" +
+            "  report, \n" +
+            "  exam_id, \n" +
+            "  status \n" +
+            "FROM \n " +
+            "  exam_report \n" +
+            "WHERE \n" +
+            "  exam_id = :examId \n" +
+            "ORDER BY id DESC LIMIT 1";
+
+        Optional<ExamReport> maybeExamReport;
+
+        try {
+            maybeExamReport = Optional.of(jdbcTemplate.queryForObject(SQL, parameters, (rs, i) -> new ExamReport(
+                rs.getString("report"),
+                ExamReportStatus.fromValue(rs.getString("status")),
+                UUID.fromString(rs.getString("exam_id"))
+            )));
+        } catch (EmptyResultDataAccessException e) {
+            maybeExamReport = Optional.empty();
+        }
+
+        return maybeExamReport;
     }
 }

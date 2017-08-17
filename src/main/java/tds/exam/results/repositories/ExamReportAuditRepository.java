@@ -14,7 +14,11 @@
 
 package tds.exam.results.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
+
+import tds.exam.results.model.ExamReport;
+import tds.exam.results.model.ExamReportStatus;
 
 /**
  * Repository for interacting with the exam
@@ -23,8 +27,17 @@ public interface ExamReportAuditRepository {
     /**
      * Saves the exam report XML blob to the exam_report table
      *
-     * @param examId        The id of the exam being reported
-     * @param examReportXml The XML blob of the TRT report
+     * @param examId           The id of the exam being reported
+     * @param examReportXml    The XML blob of the TRT report
+     * @param examReportStatus the status of the report
      */
-    void insertExamReport(final UUID examId, final String examReportXml);
+    void insertExamReport(final UUID examId, final String examReportXml, ExamReportStatus examReportStatus);
+
+    /**
+     * Find the latest {@link tds.exam.results.model.ExamReport} for exam id
+     *
+     * @param examId the exam id for the report
+     * @return Optional with {@link tds.exam.results.model.ExamReport} or empty
+     */
+    Optional<ExamReport> findLatestExamReport(final UUID examId);
 }

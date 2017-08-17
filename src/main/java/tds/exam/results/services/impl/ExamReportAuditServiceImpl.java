@@ -14,16 +14,22 @@
 
 package tds.exam.results.services.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tds.exam.results.repositories.ExamReportAuditRepository;
-import tds.exam.results.services.ExamReportAuditService;
-import tds.exam.results.trt.TDSReport;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.Optional;
 import java.util.UUID;
+
+import tds.common.web.exceptions.NotFoundException;
+import tds.exam.results.model.ExamReport;
+import tds.exam.results.model.ExamReportStatus;
+import tds.exam.results.repositories.ExamReportAuditRepository;
+import tds.exam.results.services.ExamReportAuditService;
+import tds.exam.results.trt.TDSReport;
 
 @Service
 public class ExamReportAuditServiceImpl implements ExamReportAuditService {
@@ -38,16 +44,26 @@ public class ExamReportAuditServiceImpl implements ExamReportAuditService {
     }
 
     @Override
-    public void insertExamReport(final UUID examId, final TDSReport report) {
+    public void insertExamReport(final UUID examId, final TDSReport report, final ExamReportStatus status) {
         final StringWriter sw = new StringWriter();
 
         try {
             jaxbMarshaller.marshal(report, sw);
-            final String reportXml = sw.toString();
-            examReportAuditRepository.insertExamReport(examId, reportXml);
+            examReportAuditRepository.insertExamReport(examId, sw.toString(), status);
         } catch (final JAXBException e) {
             throw new RuntimeException("Failed to marshall TDSReport into XML", e);
         }
+    }
 
+    @Override
+    public void updateExamReportStatus(final UUID examId, final ExamReportStatus statusUpdate) {
+        Optional<ExamReport> maybeExamReport = examReportAuditRepository.findLatestExamReport(examId);
+
+        if(!maybeExamReport.isPresent()) {
+            throw new NotFoundException("Could not find report for %s", examId);
+        }
+
+        ExamReport report = maybeExamReport.get();
+        examReportAuditRepository.insertExamReport(report.getExamId(), report.getReportXml(), statusUpdate);
     }
 }
