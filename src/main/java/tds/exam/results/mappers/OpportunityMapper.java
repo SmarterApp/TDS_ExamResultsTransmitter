@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright 2017 Regents of the University of California. Licensed under the Educational
  * Community License, Version 2.0 (the “license”); you may not use this file except in
  * compliance with the License. You may obtain a copy of the license at
@@ -121,7 +121,7 @@ public class OpportunityMapper {
                                                               final Map<String, Item> assessmentItems) {
         Map<UUID, Integer> itemVisitsMap = expandableExam.getItemResponseUpdates();
         final Map<String, ExamSegment> examSegments = expandableExam.getExamSegmentWrappers().stream()
-            .map(wrapper -> wrapper.getExamSegment())
+            .map(ExamSegmentWrapper::getExamSegment)
             .collect(Collectors.toMap(ExamSegment::getSegmentKey, Function.identity()));
         final Map<UUID, ExamPageWrapper> examPageWrappers = expandableExam.getExamSegmentWrappers().stream()
             .flatMap(segment -> segment.getExamPages().stream())
@@ -136,7 +136,7 @@ public class OpportunityMapper {
             Item assessmentItem = assessmentItems.get(examItem.getItemKey());
 
             opportunityItem.setPosition(examItem.getPosition());
-            opportunityItem.setSegmentId(examSegments.get(examPage.getSegmentKey()).getSegmentId());
+            opportunityItem.setSegmentId(examPage.getSegmentKey());
             opportunityItem.setBankKey(examItem.getAssessmentItemBankKey());
             opportunityItem.setKey(examItem.getAssessmentItemKey());
             opportunityItem.setClientId(assessmentItem.getClientId());
