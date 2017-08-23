@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright 2017 Regents of the University of California. Licensed under the Educational
  * Community License, Version 2.0 (the “license”); you may not use this file except in
  * compliance with the License. You may obtain a copy of the license at
@@ -123,7 +123,7 @@ public class OpportunityMapperTest {
         assertThat(opportunity.getItem()).hasSize(4);
         for (TDSReport.Opportunity.Item item : opportunity.getItem()) {
             assertThat(item.getPosition()).isGreaterThan(0);
-            assertThat(item.getSegmentId()).isEqualTo("segmentId1");
+            assertThat(item.getSegmentId()).isEqualTo("segmentKey1");
             assertThat(item.getBankKey()).isEqualTo(187);
             assertThat(item.getKey()).isGreaterThan(0);
             assertThat(item.getOperational()).isEqualTo((short) 1);
