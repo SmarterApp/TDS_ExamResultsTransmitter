@@ -15,6 +15,13 @@
 package tds.exam.results.mappers;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -33,12 +40,6 @@ import tds.exam.results.trt.TDSReport;
 import tds.exam.wrapper.ExamPageWrapper;
 import tds.exam.wrapper.ExamSegmentWrapper;
 import tds.session.Session;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
@@ -222,7 +223,7 @@ public class OpportunityMapper {
         for (ExamSegmentWrapper examSegmentWrapper : examSegmentWrappers) {
             ExamSegment examSegment = examSegmentWrapper.getExamSegment();
             TDSReport.Opportunity.Segment opportunitySegment = new TDSReport.Opportunity.Segment();
-            opportunitySegment.setId(examSegment.getSegmentId());
+            opportunitySegment.setId(examSegment.getSegmentKey());
             opportunitySegment.setPosition((short)examSegment.getSegmentPosition());
             opportunitySegment.setFormKey(examSegment.getFormKey());
             opportunitySegment.setFormId(examSegment.getFormId());
