@@ -15,6 +15,15 @@
 package tds.exam.results.mappers;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
@@ -29,14 +38,6 @@ import tds.exam.results.trt.TDSReport;
 import tds.exam.wrapper.ExamPageWrapper;
 import tds.exam.wrapper.ExamSegmentWrapper;
 import tds.session.Session;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
@@ -94,7 +95,7 @@ public class OpportunityMapperTest {
         TDSReport.Opportunity.Segment oppSeg1 = null;
 
         for (TDSReport.Opportunity.Segment oppSeg : opportunity.getSegment()) {
-            if (oppSeg.getId().equals(examSegment1.getSegmentId())) {
+            if (oppSeg.getId().equals(examSegment1.getSegmentKey())) {
                 oppSeg1 = oppSeg;
             }
         }
