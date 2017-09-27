@@ -1,10 +1,17 @@
 spring:
+  rabbitmq:
+    port: 32846
   datasource:
-    jdbcUrl: ${sbac.jdbc.host}/exam_audit
+    url: ${sbac.jdbc.host}/exam_audit
     username: ${sbac.jdbc.user}
     password: ${sbac.jdbc.password}
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      maximum-pool-size: 32
+      minimum-idle: 8
+      idle-timeout: 10000
+      connectionTestQuery: "SELECT 1"
   mvc:
     throw-exception-if-no-handler-found: false
   resources:
@@ -17,15 +24,37 @@ tds:
   cache:
     enabled: false
 
-server:
-  undertow:
-    buffer-size: 16384
-    io-threads: 64
-    worker-threads: 512
-    direct-buffers: true
-
 flyway:
   enabled: true
   url: ${sbac.jdbc.host}/exam_audit
   user: ${sbac.jdbc.user}
   password: ${sbac.jdbc.password}
+
+server:
+  port: 8089
+  undertow:
+    buffer-size: 8192
+    io-threads: 4
+    worker-threads: 32
+    direct-buffers: true
+
+#Ports defined in TDS_Build:docker-compose.yml
+exam-results-transmitter-service:
+  session-url: http://localhost:32842
+  assessment-url: http://localhost:32841
+  exam-url: http://localhost:80
+  tis-url: ${sbac.tis.url}
+  tis-callback-url: ${sbac.tis.callback.url}
+  validate-trt-xml: false
+  send-to-tis: false
+  retry-initial-interval: 1000
+  retry-interval-multiplier: 2
+  retry-max-interval: 5000
+  retry-amount: 3
+
+oauth:
+  tis-client-id: ${oauth.tis.client.id}
+  tis-client-secret: ${oauth.tis.client.secret}
+  tis-username: ${oauth.tis.username}
+  tis-password: ${oauth.tis.password}
+  access-url: ${oauth.access.url}
