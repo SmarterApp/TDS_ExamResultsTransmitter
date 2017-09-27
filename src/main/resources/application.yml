@@ -10,7 +10,7 @@ spring:
   rabbitmq:
     port: 32846
   datasource:
-    jdbcUrl: ${sbac.jdbc.host}/exam_audit
+    url: ${sbac.jdbc.host}/exam_audit
     username: ${sbac.jdbc.user}
     password: ${sbac.jdbc.password}
     type: com.zaxxer.hikari.HikariDataSource
