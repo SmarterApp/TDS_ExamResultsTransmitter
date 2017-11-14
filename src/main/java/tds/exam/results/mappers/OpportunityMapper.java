@@ -121,9 +121,6 @@ public class OpportunityMapper {
                                                               final List<TDSReport.Opportunity.Item> opportunityItems,
                                                               final Map<String, Item> assessmentItems) {
         Map<UUID, Integer> itemVisitsMap = expandableExam.getItemResponseUpdates();
-        final Map<String, ExamSegment> examSegments = expandableExam.getExamSegmentWrappers().stream()
-            .map(ExamSegmentWrapper::getExamSegment)
-            .collect(Collectors.toMap(ExamSegment::getSegmentKey, Function.identity()));
         final Map<UUID, ExamPageWrapper> examPageWrappers = expandableExam.getExamSegmentWrappers().stream()
             .flatMap(segment -> segment.getExamPages().stream())
             .collect(Collectors.toMap(wrapper -> wrapper.getExamPage().getId(), Function.identity()));
@@ -144,7 +141,12 @@ public class OpportunityMapper {
             opportunityItem.setOperational(examItem.isFieldTest() ? (short) 0 : 1);
             opportunityItem.setFormat(examItem.getItemType());
             opportunityItem.setAdminDate(JaxbMapperUtils.convertInstantToGregorianCalendar(examPage.getCreatedAt()));
-            opportunityItem.setNumberVisits(itemVisitsMap.get(examItem.getId()));
+
+            //Handle unanswered items
+            if(itemVisitsMap.containsKey(examItem.getId())) {
+                opportunityItem.setNumberVisits(itemVisitsMap.get(examItem.getId()));
+            }
+
             opportunityItem.setMimeType(assessmentItem.getMimeType());
             opportunityItem.setStrand(getStrandFromContentLevel(assessmentItem.getContentLevel()));
             opportunityItem.setContentLevel(assessmentItem.getContentLevel());
