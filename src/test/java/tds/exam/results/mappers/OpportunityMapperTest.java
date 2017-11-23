@@ -140,6 +140,39 @@ public class OpportunityMapperTest {
     }
 
     @Test
+    public void shouldHandleIncompleteExams() {
+        final Session session = random(Session.class);
+        final Assessment assessment = random(Assessment.class);
+
+        final ExpandableExam expandableExam = expandableExam();
+        ExamPageWrapper examPage = expandableExam.getExamSegmentWrappers().get(0).getExamPages().get(0);
+        ExamItem unansweredItem = new ExamItem.Builder(UUID.randomUUID())
+            .withExamPageId(examPage.getExamPage().getId())
+            .withItemFilePath("file")
+            .withItemKey("187")
+            .withItemType("type")
+            .withGroupId("group")
+            .build();
+        List<ExamItem> examItems = examPage.getExamItems();
+        examItems.add(unansweredItem);
+        final ExamSegmentWrapper examSegmentWrapper = expandableExam.getExamSegmentWrappers().get(0);
+
+        final List<Item> assessmentItems = examSegmentWrapper.getExamPages().stream()
+            .flatMap(p -> p.getExamItems().stream())
+            .map(examItem -> {
+                Item item = new Item(examItem.getItemKey());
+                item.setContentLevel("Strand|TL|D-R");
+                return item;
+            })
+            .collect(Collectors.toList());
+
+        assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
+        final List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+
+        OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
+    }
+
+    @Test
     public void shouldCapitalizeTheItemScoreStatus() {
         final Session session = random(Session.class);
         final Assessment assessment = random(Assessment.class);
@@ -162,7 +195,7 @@ public class OpportunityMapperTest {
         final TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
 
         assertThat(opportunity.getItem().stream()
-            .map(item -> item.getScoreStatus())
+            .map(TDSReport.Opportunity.Item::getScoreStatus)
             .collect(Collectors.toList())).isSubsetOf(
                 "NOTSCORED",
                 "SCORED",
@@ -194,7 +227,7 @@ public class OpportunityMapperTest {
         final TDSReport.Opportunity opportunity = OpportunityMapper.mapOpportunity(expandableExam, session, assessment, assessmentWindows);
 
         assertThat(opportunity.getItem().stream()
-            .map(item -> item.getStrand())
+            .map(TDSReport.Opportunity.Item::getStrand)
             .collect(Collectors.toList())).isSubsetOf(
                 assessment.getSegments().stream()
                     .flatMap(segment -> segment.getItems().stream())
@@ -225,7 +258,9 @@ public class OpportunityMapperTest {
                 .withGroupId("groupId")
                 .build();
 
-            pageWrappers.add(new ExamPageWrapper(examPages.get(i), Collections.singletonList(examItem)));
+            List<ExamItem> items = new ArrayList<>();
+            items.add(examItem);
+            pageWrappers.add(new ExamPageWrapper(examPages.get(i), items));
         }
 
         return pageWrappers;
