@@ -21,15 +21,17 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.xml.bind.JAXBException;
 import java.util.UUID;
 
 import tds.exam.ExamStatusCode;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
+import tds.exam.results.trt.TDSReport;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamCompletedMessageListenerTest {
@@ -48,8 +50,16 @@ public class ExamCompletedMessageListenerTest {
     }
 
     @Test
-    public void itShouldGenerateAReportForTheExamId() throws JAXBException {
+    public void itShouldGenerateAReportForTheExamId() {
         final UUID examId = UUID.randomUUID();
+
+        TDSReport report = new TDSReport();
+        TDSReport.Opportunity opportunity = new TDSReport.Opportunity();
+        opportunity.setStatus(ExamStatusCode.STATUS_COMPLETED);
+        report.setOpportunity(opportunity);
+
+
+        when(mockExamResultsService.findAndSendExamResults(examId)).thenReturn(report);
         listener.handleMessage(examId.toString());
         verify(mockExamResultsService).findAndSendExamResults(examId);
         verify(mockExamService).updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
@@ -58,5 +68,21 @@ public class ExamCompletedMessageListenerTest {
 
         inOrder.verify(mockExamResultsService).findAndSendExamResults(examId);
         inOrder.verify(mockExamService).updateStatus(examId, ExamStatusCode.STATUS_SUBMITTED);
+    }
+
+    @Test
+    public void itShouldGenerateAReportForTheExamIdButNotUpdateStatusIfExpired() {
+        final UUID examId = UUID.randomUUID();
+
+        TDSReport report = new TDSReport();
+        TDSReport.Opportunity opportunity = new TDSReport.Opportunity();
+        opportunity.setStatus(ExamStatusCode.STATUS_EXPIRED);
+        report.setOpportunity(opportunity);
+
+
+        when(mockExamResultsService.findAndSendExamResults(examId)).thenReturn(report);
+        listener.handleMessage(examId.toString());
+        verify(mockExamResultsService).findAndSendExamResults(examId);
+        verifyZeroInteractions(mockExamService);
     }
 }
