@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opentestsystem.delivery</groupId>
     <artifactId>tds-exam-results-transmitter</artifactId>
-    <version>4.1.1.RELEASE</version>
+    <version>4.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>tds-exam-results-transmitter</name>
     <description>Report processor for TDS Exams</description>
@@ -300,7 +300,7 @@
         <connection>scm:git:https://github.com/SmarterApp/TDS_ExamResultsTransmitter.git</connection>
         <developerConnection>scm:git:git://github.com/SmarterApp/TDS_ExamResultsTransmitter.git</developerConnection>
         <url>https://github.com/SmarterApp/TDS_ExamResultsTransmitter</url>
-        <tag>4.1.1.RELEASE</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
