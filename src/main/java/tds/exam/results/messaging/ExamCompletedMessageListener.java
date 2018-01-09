@@ -25,6 +25,7 @@ import java.util.UUID;
 import tds.exam.ExamStatusCode;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
+import tds.exam.results.trt.TDSReport;
 
 /**
  * This Messaging listener is responsible for handling Exam completion messages.
@@ -70,7 +71,11 @@ public class ExamCompletedMessageListener {
     private void processMessage(final String examId) {
         // Once this ERT message has been received, the exam status is "submitted"
         final UUID id = UUID.fromString(examId);
-        examResultsService.findAndSendExamResults(id);
-        examService.updateStatus(id, ExamStatusCode.STATUS_SUBMITTED);
+        TDSReport report = examResultsService.findAndSendExamResults(id);
+
+        //Expired Exams can have TRT's created.  However, those statuses do not get updated.
+        if(!report.getOpportunity().getStatus().equals(ExamStatusCode.STATUS_EXPIRED)) {
+            examService.updateStatus(id, ExamStatusCode.STATUS_SUBMITTED);
+        }
     }
 }
