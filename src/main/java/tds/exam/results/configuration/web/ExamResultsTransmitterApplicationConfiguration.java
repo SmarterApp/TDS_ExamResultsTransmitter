@@ -70,13 +70,11 @@ public class ExamResultsTransmitterApplicationConfiguration {
 
     @Bean
     public JAXBContext jaxbContext() throws JAXBException {
-        JAXBContext contextObj = JAXBContext.newInstance(TDSReport.class);
-        createMarshaller(contextObj);
-        return contextObj;
+        return JAXBContext.newInstance(TDSReport.class);
     }
 
     @Bean
     public Marshaller jaxbMarshaller(final JAXBContext jaxbContext) throws JAXBException {
-        return jaxbContext.createMarshaller();
+        return createMarshaller(jaxbContext);
     }
 }
