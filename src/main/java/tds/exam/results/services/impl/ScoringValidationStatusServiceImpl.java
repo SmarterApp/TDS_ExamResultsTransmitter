@@ -59,14 +59,12 @@ public class ScoringValidationStatusServiceImpl implements ScoringValidationStat
             properties.getSupportToolUrl(), jobId));
 
         try {
-            ResponseEntity<NoContentResponseResource> response = restTemplate.exchange(
+            restTemplate.exchange(
                 builder.build().toUri(),
                 HttpMethod.PUT,
                 requestHttpEntity,
                 new ParameterizedTypeReference<NoContentResponseResource>() {
                 });
-
-            NoContentResponseResource resource = response.getBody();
         } catch (final HttpStatusCodeException e) {
             log.error("Unable to update scoring job status for the job {}", jobId, e);
             throw new RuntimeException(String.format("Unable to update support tool job status: %s", e.getResponseBodyAsString()), e);

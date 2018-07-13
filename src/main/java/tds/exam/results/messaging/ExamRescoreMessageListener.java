@@ -52,8 +52,7 @@ public class ExamRescoreMessageListener {
 
     @Autowired
     public ExamRescoreMessageListener(final ScoringValidationStatusService scoringValidationStatusService,
-                                      final TestIntegrationSystemService tisService,
-                                      final TestPackageObjectMapperConfiguration configuration) throws JAXBException {
+                                      final TestIntegrationSystemService tisService) throws JAXBException {
         this.scoringValidationStatusService = scoringValidationStatusService;
         this.tisService = tisService;
         JAXBContext context = JAXBContext.newInstance(TestResultsWrapper.class);
@@ -69,14 +68,14 @@ public class ExamRescoreMessageListener {
     public void handleMessage(final byte[] wrapper) {
         final TestResultsWrapper testResultsWrapper;
         try {
-
             testResultsWrapper = (TestResultsWrapper) unmarshaller.unmarshal(new ByteArrayInputStream(wrapper));
             final String examId = testResultsWrapper.getTestResults().getOpportunity().getKey();
             LOG.debug("Received rescored exam notification for id: {}", examId);
 
             processMessage(examId, testResultsWrapper);
         } catch (JAXBException e) {
-            e.printStackTrace();
+            Log.error("Unexpected error processing the rescore message. Could not unmarshall the TRT in the message body", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -90,12 +89,13 @@ public class ExamRescoreMessageListener {
         try {
             tisService.sendResults(UUID.fromString(examId), report);
             final JobUpdateRequest updateRequest = createJobUpdate(Status.SUCCESS,
-                "The TRT was successfully received from the Exam Service.");
+                "The TRT was successfully sent to TIS for exam-level rescoring");
             scoringValidationStatusService.updateScoringValidationStatus(testResultsWrapper.getJobId(), updateRequest);
         } catch (final Exception e) {
             LOG.error("An error occured when attempting to send the re-scored TRT to TIS: ", e);
             final JobUpdateRequest jobFailedUpdateRequest = createJobUpdate(Status.FAIL, "The TRT could not be successfully transferred to TIS");
             scoringValidationStatusService.updateScoringValidationStatus(testResultsWrapper.getJobId(), jobFailedUpdateRequest);
+            throw e;
         }
     }
 
