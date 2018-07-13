@@ -48,11 +48,6 @@ public class ExamResultsTransmitterMessagingConfiguration {
     private final static String QUEUE_EXAM_RESCORE = "exam_rescore_results_transmitter_queue";
 
     @Bean
-    public MessageConverter jsonMessageConverter(){
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
     public TopicExchange examTopicExchange() {
         return new TopicExchange(RESCORE_TOPIC_EXCHANGE, true, false);
     }
@@ -75,7 +70,6 @@ public class ExamResultsTransmitterMessagingConfiguration {
         final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(QUEUE_EXAM_COMPLETION);
-        container.setMessageConverter(jsonMessageConverter());
         container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
         container.setAdviceChain(RetryInterceptorBuilder.stateless()
             .maxAttempts(properties.getRetryAmount())
@@ -104,7 +98,6 @@ public class ExamResultsTransmitterMessagingConfiguration {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(QUEUE_EXAM_RESCORE);
         container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
-        container.setMessageConverter(jsonMessageConverter());
         container.setAdviceChain(RetryInterceptorBuilder.stateless()
             .maxAttempts(properties.getRetryAmount())
             .recoverer(new ExamResultsTransmitterMessageRecoverer())
