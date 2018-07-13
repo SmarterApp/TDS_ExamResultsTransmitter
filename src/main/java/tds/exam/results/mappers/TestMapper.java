@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tds.assessment.Assessment;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 /**
  * A class used for mapping a {@link tds.exam.results.trt.TDSReport.Test} object from {@link tds.assessment.Assessment} data

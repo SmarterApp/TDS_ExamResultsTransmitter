@@ -25,7 +25,8 @@ import java.util.Comparator;
 
 import tds.common.configuration.*;
 import tds.common.web.advice.ExceptionAdvice;
-import tds.exam.results.trt.TDSReport;
+import tds.support.tool.testpackage.configuration.TestPackageObjectMapperConfiguration;
+import tds.trt.model.TDSReport;
 
 /**
  * Configuration for the exam results transmitter microservice
@@ -76,5 +77,10 @@ public class ExamResultsTransmitterApplicationConfiguration {
     @Bean
     public Marshaller jaxbMarshaller(final JAXBContext jaxbContext) throws JAXBException {
         return createMarshaller(jaxbContext);
+    }
+
+    @Bean("testResultsConfiguration")
+    public TestPackageObjectMapperConfiguration testResultsConfiguration() {
+        return new TestPackageObjectMapperConfiguration();
     }
 }

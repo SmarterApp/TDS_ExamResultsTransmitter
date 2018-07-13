@@ -34,7 +34,7 @@ import tds.exam.results.model.ExamReport;
 import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.repositories.ExamReportAuditRepository;
 import tds.exam.results.services.ExamReportAuditService;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;

@@ -22,7 +22,7 @@ import java.util.List;
 import tds.exam.Exam;
 import tds.exam.ExamineeNote;
 import tds.exam.ExpandableExam;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;

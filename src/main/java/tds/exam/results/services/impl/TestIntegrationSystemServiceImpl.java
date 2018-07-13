@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tds.exam.results.repositories.TestIntegrationSystemRepository;
 import tds.exam.results.services.TestIntegrationSystemService;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;

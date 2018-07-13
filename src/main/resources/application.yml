@@ -10,9 +10,9 @@ spring:
   rabbitmq:
     port: 32846
   datasource:
-    url: ${sbac.jdbc.host}/exam_audit
-    username: ${sbac.jdbc.user}
-    password: ${sbac.jdbc.password}
+    url: jdbc:mysql://localhost:3306/exam_audit
+    username: root
+    password: password123
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
     hikari:
@@ -28,15 +28,19 @@ spring:
     bus:
       enabled: false
 
+logging:
+  level:
+    tds.common.web: INFO
+
 tds:
   cache:
     enabled: false
 
 flyway:
   enabled: false
-  url: ${sbac.jdbc.host}/exam_audit
-  user: ${sbac.jdbc.user}
-  password: ${sbac.jdbc.password}
+  url: jdbc:mysql://localhost:3306/exam_audit
+  user: root
+  password: password123
 
 server:
   port: 32849
@@ -51,19 +55,20 @@ exam-results-transmitter-service:
   session-url: http://localhost:32842
   assessment-url: http://localhost:32841
   exam-url: http://localhost:8081
-  tis-url: ${sbac.tis.url}
-  tis-callback-url: ${sbac.tis.callback.url}
+  support-tool-url: http://localhost:8080/api
+  tis-url: http://tis.com/
+  tis-callback-url: http://tis.com/tis
   validate-trt-xml: false
-  send-to-tis: false
+  send-to-tis: true
   retry-initial-interval: 1000
   retry-interval-multiplier: 2
   retry-max-interval: 5000
   retry-amount: 3
 
 oauth:
-  tis-client-id: ${oauth.tis.client.id}
-  tis-client-secret: ${oauth.tis.client.secret}
-  tis-username: ${oauth.tis.username}
-  tis-password: ${oauth.tis.password}
-  access-url: ${oauth.access.url}
+  tis-client-id: pm
+  tis-client-secret: sbac12345
+  tis-username: ca.admin@example.com
+  tis-password: password
+  access-url: https://sso-deployment.sbtds.org/auth/oauth2/access_token?realm=/sbac
 
