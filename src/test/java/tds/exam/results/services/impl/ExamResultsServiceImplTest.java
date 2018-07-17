@@ -39,7 +39,7 @@ import tds.exam.*;
 import tds.exam.results.configuration.web.ExamResultsTransmitterApplicationConfiguration;
 import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.*;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;

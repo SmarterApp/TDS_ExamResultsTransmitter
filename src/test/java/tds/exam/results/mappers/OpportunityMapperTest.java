@@ -34,7 +34,7 @@ import tds.exam.ExamItemResponse;
 import tds.exam.ExamPage;
 import tds.exam.ExamSegment;
 import tds.exam.ExpandableExam;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 import tds.exam.wrapper.ExamPageWrapper;
 import tds.exam.wrapper.ExamSegmentWrapper;
 import tds.session.Session;

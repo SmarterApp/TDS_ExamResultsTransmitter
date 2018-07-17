@@ -14,7 +14,7 @@
 
 package tds.exam.results.validation;
 
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 /**
  * A validator responsible for JAXB validation

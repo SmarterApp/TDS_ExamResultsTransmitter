@@ -26,7 +26,7 @@ import java.util.UUID;
 import tds.exam.ExamStatusCode;
 import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;

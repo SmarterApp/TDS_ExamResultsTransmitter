@@ -27,7 +27,7 @@ import tds.exam.ExamineeContext;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
 import tds.exam.results.trt.Context;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;

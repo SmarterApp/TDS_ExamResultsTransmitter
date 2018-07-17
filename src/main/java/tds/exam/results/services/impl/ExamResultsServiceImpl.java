@@ -37,7 +37,7 @@ import tds.exam.results.services.ExamResultsService;
 import tds.exam.results.services.ExamService;
 import tds.exam.results.services.SessionService;
 import tds.exam.results.services.TestIntegrationSystemService;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
