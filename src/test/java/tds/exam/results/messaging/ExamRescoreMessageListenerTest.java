@@ -95,7 +95,7 @@ public class ExamRescoreMessageListenerTest {
         assertThat(secondUpdateRequest.getTargetSystem()).isEqualTo(TargetSystem.ERT);
         assertThat(secondUpdateRequest.getDescription()).isEqualTo("The TRT was successfully sent to TIS for exam-level rescoring");
 
-        verify(mockTisService).sendResults(isA(UUID.class), isA(TDSReport.class));
+        verify(mockTisService).sendResults(isA(UUID.class), isA(TDSReport.class), isA(String.class));
     }
 
     @Test(expected = RuntimeException.class)

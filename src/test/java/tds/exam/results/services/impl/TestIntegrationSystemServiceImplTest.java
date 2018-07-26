@@ -53,6 +53,6 @@ public class TestIntegrationSystemServiceImplTest {
         final TDSReport report = new TDSReport();
 
         testIntegrationSystemService.sendResults(examId, report);
-        verify(mockTestIntegrationSystemRepository).sendResults(eq(examId), any());
+        verify(mockTestIntegrationSystemRepository).sendResults(eq(examId), any(), any());
     }
 }

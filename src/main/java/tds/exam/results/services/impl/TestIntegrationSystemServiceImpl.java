@@ -23,6 +23,7 @@ import tds.trt.model.TDSReport;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,12 +39,21 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
     }
 
     @Override
+    public void sendResults(final UUID examId, final TDSReport report, final String rescoreJobId) {
+        sendResults(examId, report, Optional.of(rescoreJobId));
+    }
+
+    @Override
     public void sendResults(final UUID examId, final TDSReport report) {
+        sendResults(examId, report, Optional.empty());
+    }
+
+    private void sendResults(final UUID examId, final TDSReport report, final Optional<String> rescoreJobId) {
         final StringWriter sw = new StringWriter();
         try {
             jaxbMarshaller.marshal(report, sw);
             final String reportXml = sw.toString();
-            testIntegrationSystemRepository.sendResults(examId, reportXml);
+            testIntegrationSystemRepository.sendResults(examId, reportXml, rescoreJobId);
         } catch (final JAXBException e) {
             throw new RuntimeException("Failed to marshall TDSReport into XML", e);
         }

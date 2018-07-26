@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
@@ -45,7 +46,7 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
     }
 
     @Override
-    public void sendResults(final UUID examId, final String results) {
+    public void sendResults(final UUID examId, final String results, final Optional<String> rescoreJobId) {
         if (!properties.isSendToTis()) {
             log.info("SendToTIS configuration property is false resulting in TIS XML not sent: " + results);
             return;
@@ -56,6 +57,11 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
         HttpEntity<?> requestHttpEntity = new HttpEntity<>(results, headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/api/testresult", properties.getTisUrl()))
             .queryParam("statusCallback", properties.getTisCallbackUrl());
+
+        rescoreJobId.ifPresent(id -> {
+            builder.queryParam("scoreMode", "validate");
+            // TODO send id on callback url
+        });
 
         try {
             restTemplate.exchange(

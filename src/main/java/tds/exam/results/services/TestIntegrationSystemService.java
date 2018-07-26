@@ -29,4 +29,6 @@ public interface TestIntegrationSystemService {
      * @param report The {@link tds.exam.results.trt.TDSReport} TRT jaxb object
      */
     void sendResults(final UUID examId, final TDSReport report);
+
+    void sendResults(final UUID examId, final TDSReport report, final String rescoreJobId);
 }

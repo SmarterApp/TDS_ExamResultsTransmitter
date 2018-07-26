@@ -25,6 +25,7 @@ import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
@@ -57,7 +58,7 @@ public class RemoteTestIntegrationSystemRepositoryTest {
 
         when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
         when(mockProperties.isSendToTis()).thenReturn(true);
-        testIntegrationSystemRepository.sendResults(examId, results);
+        testIntegrationSystemRepository.sendResults(examId, results, Optional.of("id"));
 
         verify(mockRestTemplate).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
     }
@@ -69,7 +70,7 @@ public class RemoteTestIntegrationSystemRepositoryTest {
 
         when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
         when(mockProperties.isSendToTis()).thenReturn(false);
-        testIntegrationSystemRepository.sendResults(examId, results);
+        testIntegrationSystemRepository.sendResults(examId, results, Optional.empty());
 
         verify(mockRestTemplate, never()).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
     }
