@@ -58,7 +58,7 @@ public class RemoteTestIntegrationSystemRepositoryTest {
 
         when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
         when(mockProperties.isSendToTis()).thenReturn(true);
-        testIntegrationSystemRepository.sendResults(examId, results, Optional.of("id"));
+        testIntegrationSystemRepository.sendResults(examId, results, Optional.of(UUID.fromString("id")));
 
         verify(mockRestTemplate).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
     }

@@ -46,7 +46,7 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
     }
 
     @Override
-    public void sendResults(final UUID examId, final String results, final Optional<String> rescoreJobId) {
+    public void sendResults(final UUID examId, final String results, final Optional<UUID> rescoreJobId) {
         if (!properties.isSendToTis()) {
             log.info("SendToTIS configuration property is false resulting in TIS XML not sent: " + results);
             return;
@@ -60,7 +60,7 @@ public class RemoteTestIntegrationSystemRepository implements TestIntegrationSys
 
         rescoreJobId.ifPresent(id -> {
             builder.queryParam("scoreMode", "validate");
-            // TODO send id on callback url
+            // TODO send job id on callback url
         });
 
         try {

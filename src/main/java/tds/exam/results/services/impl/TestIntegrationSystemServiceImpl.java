@@ -39,7 +39,7 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
     }
 
     @Override
-    public void sendResults(final UUID examId, final TDSReport report, final String rescoreJobId) {
+    public void sendResults(final UUID examId, final TDSReport report, final UUID rescoreJobId) {
         sendResults(examId, report, Optional.of(rescoreJobId));
     }
 
@@ -48,7 +48,7 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
         sendResults(examId, report, Optional.empty());
     }
 
-    private void sendResults(final UUID examId, final TDSReport report, final Optional<String> rescoreJobId) {
+    private void sendResults(final UUID examId, final TDSReport report, final Optional<UUID> rescoreJobId) {
         final StringWriter sw = new StringWriter();
         try {
             jaxbMarshaller.marshal(report, sw);

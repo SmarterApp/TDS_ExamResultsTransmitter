@@ -30,5 +30,5 @@ public interface TestIntegrationSystemService {
      */
     void sendResults(final UUID examId, final TDSReport report);
 
-    void sendResults(final UUID examId, final TDSReport report, final String rescoreJobId);
+    void sendResults(final UUID examId, final TDSReport report, final UUID rescoreJobId);
 }

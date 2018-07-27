@@ -87,7 +87,7 @@ public class ExamRescoreMessageListener {
         final TDSReport report = testResultsWrapper.getTestResults();
 
         try {
-            tisService.sendResults(UUID.fromString(examId), report, "jobid");
+            tisService.sendResults(UUID.fromString(examId), report, UUID.fromString(testResultsWrapper.getJobId()));
             final JobUpdateRequest updateRequest = createJobUpdate(Status.SUCCESS,
                 "The TRT was successfully sent to TIS for exam-level rescoring");
             scoringValidationStatusService.updateScoringValidationStatus(testResultsWrapper.getJobId(), updateRequest);
