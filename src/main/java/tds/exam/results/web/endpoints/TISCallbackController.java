@@ -51,6 +51,7 @@ public class TISCallbackController {
         } else {
             // TODO: Send to support tool
             System.out.println(state.getTrt());
+            return;
         }
 
         /*

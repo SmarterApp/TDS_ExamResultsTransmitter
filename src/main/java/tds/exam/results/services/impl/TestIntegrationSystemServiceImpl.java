@@ -51,6 +51,10 @@ public class TestIntegrationSystemServiceImpl implements TestIntegrationSystemSe
     private void sendResults(final UUID examId, final TDSReport report, final Optional<UUID> rescoreJobId) {
         final StringWriter sw = new StringWriter();
         try {
+            rescoreJobId.ifPresent(id -> {
+                report.getOpportunity().setOppId("0");
+                report.getOpportunity().getScore().clear();
+            });
             jaxbMarshaller.marshal(report, sw);
             final String reportXml = sw.toString();
             testIntegrationSystemRepository.sendResults(examId, reportXml, rescoreJobId);
