@@ -46,7 +46,12 @@ public class TISCallbackController {
     @RequestMapping(value = "/tis", method= RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void tisCallback(@RequestBody final TISState state) {
         UUID examId = UUID.fromString(state.getOppKey());
-        messagingService.sendReportAcknowledgement(examId, state);
+        if (state.getTrt() == null) {
+            messagingService.sendReportAcknowledgement(examId, state);
+        } else {
+            // TODO: Send to support tool
+            System.out.println(state.getTrt());
+        }
 
         /*
         Try catch the exception because TIS has processed the message so we do not want to stop the sending of that to exam

@@ -23,6 +23,7 @@ public class TISState {
     private String oppKey;
     private boolean success;
     private String error;
+    private String trt;
 
     /**
      * Empty constructor for frameworks
@@ -59,6 +60,13 @@ public class TISState {
      */
     public String getError() {
         return error;
+    }
+
+    /**
+     * @return A string with an error message,
+     */
+    public String getTrt() {
+        return trt;
     }
 
     @Override
