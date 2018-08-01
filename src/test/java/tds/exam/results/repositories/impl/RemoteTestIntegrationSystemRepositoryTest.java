@@ -17,12 +17,12 @@ package tds.exam.results.repositories.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Optional;
@@ -52,15 +52,33 @@ public class RemoteTestIntegrationSystemRepositoryTest {
     }
 
     @Test
-    public void shouldSendResultsToTis() {
+    public void shouldSendResultsToTisWithNoJobIdOmitsValidate() {
         final UUID examId = UUID.randomUUID();
         final String results = "TestResults";
 
         when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
+        when(mockProperties.getTisCallbackUrl()).thenReturn("http://localhost:1235");
         when(mockProperties.isSendToTis()).thenReturn(true);
-        testIntegrationSystemRepository.sendResults(examId, results, Optional.of(UUID.fromString("id")));
+        testIntegrationSystemRepository.sendResults(examId, results, Optional.empty());
 
-        verify(mockRestTemplate).exchange(isA(URI.class), isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
+        verify(mockRestTemplate).exchange(
+            Matchers.eq(URI.create("http://localhost:1234/api/testresult?statusCallback=http://localhost:1235")),
+            isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
+    }
+
+    @Test
+    public void shouldSendResultsToTisWithJobIdSetsValidate() {
+        final UUID examId = UUID.randomUUID();
+        final String results = "TestResults";
+
+        when(mockProperties.getTisUrl()).thenReturn("http://localhost:1234");
+        when(mockProperties.getTisCallbackUrl()).thenReturn("http://localhost:1235");
+        when(mockProperties.isSendToTis()).thenReturn(true);
+        testIntegrationSystemRepository.sendResults(examId, results, Optional.of("id"));
+
+        verify(mockRestTemplate).exchange(
+            Matchers.eq(URI.create("http://localhost:1234/api/testresult?scoreMode=validate&statusCallback=http://localhost:1235?jobid=id")),
+            isA(HttpMethod.class), isA(HttpEntity.class), isA(Class.class));
     }
 
     @Test

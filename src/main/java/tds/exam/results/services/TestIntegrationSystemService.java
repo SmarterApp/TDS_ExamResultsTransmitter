@@ -14,9 +14,9 @@
 
 package tds.exam.results.services;
 
-import tds.trt.model.TDSReport;
-
 import java.util.UUID;
+
+import tds.trt.model.TDSReport;
 
 /**
  * Service for interacting with an instance of the Test Integration System
@@ -30,5 +30,5 @@ public interface TestIntegrationSystemService {
      */
     void sendResults(final UUID examId, final TDSReport report);
 
-    void sendResults(final UUID examId, final TDSReport report, final UUID rescoreJobId);
+    void sendResults(final UUID examId, final TDSReport report, final String rescoreJobId);
 }

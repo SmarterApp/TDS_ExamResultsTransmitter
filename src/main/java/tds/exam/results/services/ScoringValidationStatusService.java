@@ -18,4 +18,5 @@ import tds.support.job.JobUpdateRequest;
 
 public interface ScoringValidationStatusService {
     void updateScoringValidationStatus(final String jobId, final JobUpdateRequest request);
+    void updateScoringValidationResults(final String jobId, final String trt);
 }

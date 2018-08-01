@@ -18,16 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.MessagingService;
+import tds.exam.results.services.ScoringValidationStatusService;
 import tds.exam.results.tis.TISState;
 
 @RestController
@@ -36,32 +35,38 @@ public class TISCallbackController {
 
     private final MessagingService messagingService;
     private final ExamReportAuditService examReportAuditService;
+    private final ScoringValidationStatusService scoringValidationStatusService;
 
     @Autowired
-    public TISCallbackController(final MessagingService messagingService, final ExamReportAuditService examReportAuditService) {
+    public TISCallbackController(final MessagingService messagingService, final ExamReportAuditService examReportAuditService,
+                                 ScoringValidationStatusService scoringValidationStatusService) {
         this.messagingService = messagingService;
         this.examReportAuditService = examReportAuditService;
+        this.scoringValidationStatusService = scoringValidationStatusService;
     }
 
     @RequestMapping(value = "/tis", method= RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void tisCallback(@RequestBody final TISState state) {
-        UUID examId = UUID.fromString(state.getOppKey());
-        if (state.getTrt() == null) {
-            messagingService.sendReportAcknowledgement(examId, state);
+    public void tisCallback(@RequestParam(value = "jobId") Optional<String> jobId,
+                            @RequestBody final TISState state) {
+        if (jobId.isPresent() || state.getTrt() != null) {
+            if (!jobId.isPresent() || state.getTrt() == null) {
+                LOG.error(String.format("Can't report rescore results - jobId or TRT missing. jobId: '%s', TRT: '%s'",
+                    jobId, state.getTrt()));
+            } else {
+                scoringValidationStatusService.updateScoringValidationResults(jobId.get(), state.getTrt());
+            }
         } else {
-            // TODO: Send to support tool
-            System.out.println(state.getTrt());
-            return;
-        }
-
-        /*
-        Try catch the exception because TIS has processed the message so we do not want to stop the sending of that to exam
-        just to update the status
-        */
-        try {
-            examReportAuditService.updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
-        } catch (final Exception e) {
-            LOG.error(String.format("Failed to update the report status for %s to processed due to exception", examId), e);
+            UUID examId = UUID.fromString(state.getOppKey());
+            messagingService.sendReportAcknowledgement(examId, state);
+            /*
+            Try catch the exception because TIS has processed the message so we do not want to stop the sending of that to exam
+            just to update the status
+            */
+            try {
+                examReportAuditService.updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
+            } catch (final Exception e) {
+                LOG.error(String.format("Failed to update the report status for %s to processed due to exception", examId), e);
+            }
         }
     }
 }

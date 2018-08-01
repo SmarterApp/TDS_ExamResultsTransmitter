@@ -28,5 +28,5 @@ public interface TestIntegrationSystemRepository {
      * @param results The marshalled TRT XML blob
      * @param rescoreJobId Support tool job id associated with rescoring this TRT
      */
-    void sendResults(final UUID examId, final String results, final Optional<UUID> rescoreJobId);
+    void sendResults(final UUID examId, final String results, final Optional<String> rescoreJobId);
 }

@@ -41,6 +41,10 @@ public class TISState {
         this.success = success;
     }
 
+    public TISState(final String trt) {
+        this.trt = trt;
+    }
+
     /**
      * @return The id of the exam that was reported
      */

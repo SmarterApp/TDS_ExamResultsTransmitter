@@ -22,7 +22,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -38,12 +37,15 @@ import tds.support.job.JobUpdateRequest;
 public class ScoringValidationStatusServiceImpl implements ScoringValidationStatusService {
     private static final Logger log = LoggerFactory.getLogger(ScoringValidationStatusServiceImpl.class);
     private final OAuth2RestOperations restTemplate;
+    private final RestTemplate unauthedRestTemplate;
     private final ExamResultsTransmitterServiceProperties properties;
 
     @Autowired
     public ScoringValidationStatusServiceImpl(final OAuth2RestOperations restTemplate,
+                                              final RestTemplate unauthedRestTemplate,
                                               final ExamResultsTransmitterServiceProperties properties) {
         this.restTemplate = restTemplate;
+        this.unauthedRestTemplate = unauthedRestTemplate;
         this.properties = properties;
     }
 
@@ -68,6 +70,25 @@ public class ScoringValidationStatusServiceImpl implements ScoringValidationStat
         } catch (final HttpStatusCodeException e) {
             log.error("Unable to update scoring job status for the job {}", jobId, e);
             throw new RuntimeException(String.format("Unable to update support tool job status: %s", e.getResponseBodyAsString()), e);
+        }
+    }
+
+    @Override
+    public void updateScoringValidationResults(final String jobId, final String trt) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.setContentType(MediaType.APPLICATION_XML);
+
+        final HttpEntity<?> requestHttpEntity = new HttpEntity<>(trt, headers);
+
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/scoring/validation/%s",
+            properties.getSupportToolUrl(), jobId));
+
+        try {
+            unauthedRestTemplate.exchange(builder.build().toUri(), HttpMethod.POST, requestHttpEntity, String.class);
+        } catch (final HttpStatusCodeException e) {
+            log.error("Unable to send rescored TRT to support tool for the job {}", jobId, e);
+            throw new RuntimeException(String.format("Unable to send rescored TRT to support tool: %s", e.getResponseBodyAsString()), e);
         }
     }
 }
