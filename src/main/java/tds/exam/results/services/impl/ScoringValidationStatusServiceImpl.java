@@ -57,7 +57,7 @@ public class ScoringValidationStatusServiceImpl implements ScoringValidationStat
 
         final HttpEntity<JobUpdateRequest> requestHttpEntity = new HttpEntity<>(request, headers);
 
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/scoring/%s",
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/internal/scoring/%s",
             properties.getSupportToolUrl(), jobId));
 
         try {
@@ -81,7 +81,7 @@ public class ScoringValidationStatusServiceImpl implements ScoringValidationStat
 
         final HttpEntity<?> requestHttpEntity = new HttpEntity<>(trt, headers);
 
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/api/scoring/validation/%s",
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(String.format("%s/internal/scoring/validation/%s",
             properties.getSupportToolUrl(), jobId));
 
         try {
