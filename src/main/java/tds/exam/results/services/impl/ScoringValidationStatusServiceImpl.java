@@ -86,6 +86,7 @@ public class ScoringValidationStatusServiceImpl implements ScoringValidationStat
 
         try {
             unauthedRestTemplate.exchange(builder.build().toUri(), HttpMethod.POST, requestHttpEntity, String.class);
+            log.debug(String.format("Reported rescore results to support tool for jobId '%s'", jobId));
         } catch (final HttpStatusCodeException e) {
             log.error("Unable to send rescored TRT to support tool for the job {}", jobId, e);
             throw new RuntimeException(String.format("Unable to send rescored TRT to support tool: %s", e.getResponseBodyAsString()), e);

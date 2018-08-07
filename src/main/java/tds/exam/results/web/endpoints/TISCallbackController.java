@@ -46,13 +46,15 @@ public class TISCallbackController {
     }
 
     @RequestMapping(value = "/tis", method= RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void tisCallback(@RequestParam(value = "jobId") Optional<String> jobId,
+    public void tisCallback(@RequestParam(value = "jobid") Optional<String> jobId,
                             @RequestBody final TISState state) {
+        LOG.info(String.format("Entered TIS callback. jobId present: %b, state present: %b", jobId.isPresent(), state));
         if (jobId.isPresent() || state.getTrt() != null) {
             if (!jobId.isPresent() || state.getTrt() == null) {
                 LOG.error(String.format("Can't report rescore results - jobId or TRT missing. jobId: '%s', TRT: '%s'",
                     jobId, state.getTrt()));
             } else {
+                LOG.info(String.format("Reporting rescore results for jobId '%s', TRT len %d", jobId, state.getTrt().length()));
                 scoringValidationStatusService.updateScoringValidationResults(jobId.get(), state.getTrt());
             }
         } else {

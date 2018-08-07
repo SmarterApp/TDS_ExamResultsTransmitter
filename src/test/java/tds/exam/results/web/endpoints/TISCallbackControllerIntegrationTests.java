@@ -93,7 +93,7 @@ public class TISCallbackControllerIntegrationTests {
     public void shouldSendMessageForRescoreResult() throws Exception {
         final TISState tisState = new TISState("<TDSReport/>");
 
-        http.perform(post(new URI("/tis?jobId=1234"))
+        http.perform(post(new URI("/tis?jobid=1234"))
             .contentType(MediaType.APPLICATION_JSON)
             .content(ow.writeValueAsString(tisState)))
             .andExpect(status().isOk());
@@ -105,7 +105,7 @@ public class TISCallbackControllerIntegrationTests {
 
     @Test
     public void shouldNotReportAnythingIfJobIdMissingButTrtPresent() throws Exception {
-        // Provide a TRT, do not provide a jobId.
+        // Provide a TRT, do not provide a jobid.
         final TISState tisState = new TISState("<TDSReport/>");
 
         http.perform(post(new URI("/tis"))
@@ -122,10 +122,10 @@ public class TISCallbackControllerIntegrationTests {
 
     @Test
     public void shouldNotReportAnythingIfTrtMissingButJobIdPresent() throws Exception {
-        // Do not provide a TRT, but do provide a jobId.
+        // Do not provide a TRT, but do provide a jobid.
         final TISState tisState = new TISState("oppKey", true);
 
-        http.perform(post(new URI("/tis?jobId=1234"))
+        http.perform(post(new URI("/tis?jobid=1234"))
             .contentType(MediaType.APPLICATION_JSON)
             .content(ow.writeValueAsString(tisState)))
             .andExpect(status().isOk());
