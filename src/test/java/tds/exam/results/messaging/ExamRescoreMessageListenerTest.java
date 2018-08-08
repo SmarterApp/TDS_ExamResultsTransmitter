@@ -25,9 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.UUID;
 
 import tds.exam.results.services.ScoringValidationStatusService;
@@ -38,14 +36,12 @@ import tds.support.job.TargetSystem;
 import tds.support.job.TestResultsWrapper;
 import tds.trt.model.TDSReport;
 
-import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamRescoreMessageListenerTest {
@@ -95,7 +91,7 @@ public class ExamRescoreMessageListenerTest {
         assertThat(secondUpdateRequest.getTargetSystem()).isEqualTo(TargetSystem.ERT);
         assertThat(secondUpdateRequest.getDescription()).isEqualTo("The TRT was successfully sent to TIS for exam-level rescoring");
 
-        verify(mockTisService).sendResults(isA(UUID.class), isA(TDSReport.class));
+        verify(mockTisService).sendResults(isA(UUID.class), isA(TDSReport.class), isA(String.class));
     }
 
     @Test(expected = RuntimeException.class)

@@ -18,13 +18,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -34,8 +35,8 @@ import tds.support.job.JobUpdateRequest;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,11 +47,14 @@ public class ScoringValidationStatusServiceImplTest {
     private OAuth2RestOperations restTemplate;
 
     @Mock
+    private RestTemplate unauthedRestTemplate;
+
+    @Mock
     private ExamResultsTransmitterServiceProperties properties;
 
     @Before
     public void setup() {
-        service = new ScoringValidationStatusServiceImpl(restTemplate, properties);
+        service = new ScoringValidationStatusServiceImpl(restTemplate, unauthedRestTemplate, properties);
     }
 
     @Test
@@ -74,6 +78,20 @@ public class ScoringValidationStatusServiceImplTest {
             .thenThrow(RestClientResponseException.class);
         service.updateScoringValidationStatus(jobId, request);
         verify(restTemplate).exchange(isA(URI.class), eq(HttpMethod.PUT), isA(HttpEntity.class), isA(ParameterizedTypeReference.class));
+        verify(properties).getSupportToolUrl();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldUpateScoringValidationResults() {
+        final String jobId = "jobId";
+        final String trt = "<TDSReport/>";
+
+        when(properties.getSupportToolUrl()).thenReturn("http://localhost:8080/api");
+        when(unauthedRestTemplate.exchange(isA(URI.class), eq(HttpMethod.POST), isA(HttpEntity.class), isA(Class.class)))
+            .thenThrow(RestClientResponseException.class);
+        service.updateScoringValidationResults(jobId, trt);
+        verify(unauthedRestTemplate).exchange(isA(URI.class), eq(HttpMethod.POST), isA(HttpEntity.class), isA(Class.class));
+        verify(restTemplate, Mockito.times(0)).exchange(isA(URI.class), eq(HttpMethod.POST), isA(HttpEntity.class), isA(Class.class));
         verify(properties).getSupportToolUrl();
     }
 }

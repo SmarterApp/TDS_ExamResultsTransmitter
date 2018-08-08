@@ -15,7 +15,6 @@
 package tds.exam.results.messaging;
 
 import com.esotericsoftware.minlog.Log;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.UUID;
 
 import tds.exam.results.services.ScoringValidationStatusService;
@@ -34,7 +32,6 @@ import tds.support.job.JobUpdateRequest;
 import tds.support.job.Status;
 import tds.support.job.TargetSystem;
 import tds.support.job.TestResultsWrapper;
-import tds.support.tool.testpackage.configuration.TestPackageObjectMapperConfiguration;
 import tds.trt.model.TDSReport;
 
 /**
@@ -87,7 +84,7 @@ public class ExamRescoreMessageListener {
         final TDSReport report = testResultsWrapper.getTestResults();
 
         try {
-            tisService.sendResults(UUID.fromString(examId), report);
+            tisService.sendResults(UUID.fromString(examId), report, testResultsWrapper.getJobId());
             final JobUpdateRequest updateRequest = createJobUpdate(Status.SUCCESS,
                 "The TRT was successfully sent to TIS for exam-level rescoring");
             scoringValidationStatusService.updateScoringValidationStatus(testResultsWrapper.getJobId(), updateRequest);
