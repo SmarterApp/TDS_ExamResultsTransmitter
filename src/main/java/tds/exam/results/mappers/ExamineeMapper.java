@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.method.P;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,8 +27,8 @@ import java.util.Map;
 
 import tds.exam.ExpandableExam;
 import tds.exam.results.mappers.utils.JaxbMapperUtils;
-import tds.exam.results.trt.Context;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.Context;
+import tds.trt.model.TDSReport;
 
 /**
  * A mapper class for mapping examinee data to the JAXB {@link tds.exam.results.trt.TDSReport.Examinee} object

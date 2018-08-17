@@ -22,7 +22,7 @@ import java.util.Collections;
 import tds.assessment.Assessment;
 import tds.assessment.Item;
 import tds.assessment.Segment;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static org.assertj.core.api.Assertions.assertThat;

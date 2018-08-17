@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,6 +37,7 @@ import tds.common.web.advice.ExceptionAdvice;
 import tds.exam.results.model.ExamReportStatus;
 import tds.exam.results.services.ExamReportAuditService;
 import tds.exam.results.services.MessagingService;
+import tds.exam.results.services.ScoringValidationStatusService;
 import tds.exam.results.tis.TISState;
 
 import static org.mockito.Matchers.eq;
@@ -60,6 +63,9 @@ public class TISCallbackControllerIntegrationTests {
     @MockBean
     private ExamReportAuditService mockExamReportAuditService;
 
+    @MockBean
+    private ScoringValidationStatusService mockScoringValidationStatusService;
+
     private ObjectWriter ow;
 
     @Before
@@ -79,8 +85,57 @@ public class TISCallbackControllerIntegrationTests {
 
         verify(mockMessagingService).sendReportAcknowledgement(eq(examId), isA(TISState.class));
         verify(mockExamReportAuditService).updateExamReportStatus(examId, ExamReportStatus.PROCESSED);
+        verify(mockScoringValidationStatusService, Mockito.times(0)).updateScoringValidationResults(
+            Matchers.any(), Matchers.any());
     }
 
+    @Test
+    public void shouldSendMessageForRescoreResult() throws Exception {
+        final TISState tisState = new TISState("<TDSReport/>");
+
+        http.perform(post(new URI("/tis?jobid=1234"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ow.writeValueAsString(tisState)))
+            .andExpect(status().isOk());
+
+        verify(mockMessagingService, Mockito.times(0)).sendReportAcknowledgement(Matchers.any(), Matchers.any());
+        verify(mockExamReportAuditService, Mockito.times(0)).updateExamReportStatus(Matchers.any(), Matchers.any());
+        verify(mockScoringValidationStatusService).updateScoringValidationResults("1234", "<TDSReport/>");
+    }
+
+    @Test
+    public void shouldNotReportAnythingIfJobIdMissingButTrtPresent() throws Exception {
+        // Provide a TRT, do not provide a jobid.
+        final TISState tisState = new TISState("<TDSReport/>");
+
+        http.perform(post(new URI("/tis"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ow.writeValueAsString(tisState)))
+            .andExpect(status().isOk());
+
+        // Make sure nothing got called.
+        verify(mockMessagingService, Mockito.times(0)).sendReportAcknowledgement(Matchers.any(), Matchers.any());
+        verify(mockExamReportAuditService, Mockito.times(0)).updateExamReportStatus(Matchers.any(), Matchers.any());
+        verify(mockScoringValidationStatusService, Mockito.times(0)).updateScoringValidationResults(
+            Matchers.any(), Matchers.any());
+    }
+
+    @Test
+    public void shouldNotReportAnythingIfTrtMissingButJobIdPresent() throws Exception {
+        // Do not provide a TRT, but do provide a jobid.
+        final TISState tisState = new TISState("oppKey", true);
+
+        http.perform(post(new URI("/tis?jobid=1234"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(ow.writeValueAsString(tisState)))
+            .andExpect(status().isOk());
+
+        // Make sure nothing got called.
+        verify(mockMessagingService, Mockito.times(0)).sendReportAcknowledgement(Matchers.any(), Matchers.any());
+        verify(mockExamReportAuditService, Mockito.times(0)).updateExamReportStatus(Matchers.any(), Matchers.any());
+        verify(mockScoringValidationStatusService, Mockito.times(0)).updateScoringValidationResults(
+            Matchers.any(), Matchers.any());
+    }
 
     @Test
     public void shouldReturn400ForBadExamId() throws Exception {

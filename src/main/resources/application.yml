@@ -53,6 +53,7 @@ exam-results-transmitter-service:
   exam-url: http://localhost:8081
   tis-url: ${sbac.tis.url}
   tis-callback-url: ${sbac.tis.callback.url}
+  support-tool-url: ${sbac.support.tool.url}
   validate-trt-xml: false
   send-to-tis: false
   retry-initial-interval: 1000

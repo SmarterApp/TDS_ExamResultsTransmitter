@@ -27,7 +27,7 @@ import tds.exam.ExamineeContext;
 import tds.exam.ExamineeRelationship;
 import tds.exam.ExpandableExam;
 import tds.exam.results.trt.Context;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static io.github.benas.randombeans.api.EnhancedRandom.random;
 import static io.github.benas.randombeans.api.EnhancedRandom.randomListOf;
@@ -66,7 +66,7 @@ public class ExamineeMapperTest {
                 && ((TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute).getName().equals("Birthdate")){
                 dobAttribute = (TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute;
                 assertThat(dobAttribute.getValue()).isEqualTo("1900-01-01");
-                assertThat(dobAttribute.getContext()).isEqualTo(Context.fromValue(examineeAttribute.getContext().name()));
+                assertThat(dobAttribute.getContext().value()).isEqualTo(examineeAttribute.getContext().name());
                 assertThat(dobAttribute.getContextDate()).isNotNull();
             }
         }
@@ -100,17 +100,17 @@ public class ExamineeMapperTest {
                 && ((TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute).getName().equals(examineeAttribute.getName())) {
                 attribute1 = (TDSReport.Examinee.ExamineeAttribute) relationshipOrAttribute;
                 assertThat(attribute1.getValue()).isEqualTo(examineeAttribute.getValue());
-                assertThat(attribute1.getContext()).isEqualTo(Context.fromValue(examineeAttribute.getContext().name()));
+                assertThat(attribute1.getContext().value()).isEqualTo(examineeAttribute.getContext().name());
                 assertThat(attribute1.getContextDate()).isNotNull();
             }
         }
 
         assertThat(attribute1.getValue()).isEqualTo(examineeAttribute.getValue());
-        assertThat(attribute1.getContext()).isEqualTo(Context.fromValue(examineeAttribute.getContext().name()));
+        assertThat(attribute1.getContext().value()).isEqualTo(examineeAttribute.getContext().name());
         assertThat(attribute1.getContextDate()).isNotNull();
 
         assertThat(relationship1.getValue()).isEqualTo(examineeRelationship.getValue());
-        assertThat(relationship1.getContext()).isEqualTo(Context.fromValue(examineeRelationship.getContext().name()));
+        assertThat(relationship1.getContext().value()).isEqualTo(examineeRelationship.getContext().name());
         assertThat(relationship1.getContextDate()).isNotNull();
 
         TDSReport.Examinee.ExamineeAttribute dateAttribute =
