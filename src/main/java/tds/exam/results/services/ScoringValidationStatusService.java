@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***************************************************************************************************
  * Copyright 2017 Regents of the University of California. Licensed under the Educational
  * Community License, Version 2.0 (the “license”); you may not use this file except in
  * compliance with the License. You may obtain a copy of the license at
@@ -10,20 +10,13 @@
  * KIND, either express or implied. See the License for specific language governing permissions
  * and limitations under the license.
  *
- ******************************************************************************/
+ **************************************************************************************************/
 
-package tds.exam.results.validation;
+package tds.exam.results.services;
 
-import tds.trt.model.TDSReport;
+import tds.support.job.JobUpdateRequest;
 
-/**
- * A validator responsible for JAXB validation
- */
-public interface TDSReportValidator {
-    /**
-     * Validates the {@link tds.exam.results.trt.TDSReport} against the TRT xsd
-     *
-     * @param results
-     */
-    void validateReport(TDSReport results);
+public interface ScoringValidationStatusService {
+    void updateScoringValidationStatus(final String jobId, final JobUpdateRequest request);
+    void updateScoringValidationResults(final String jobId, final String trt);
 }

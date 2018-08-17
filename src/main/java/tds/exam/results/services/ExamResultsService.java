@@ -14,7 +14,7 @@
 
 package tds.exam.results.services;
 
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import java.util.UUID;
 

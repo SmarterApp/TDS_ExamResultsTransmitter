@@ -18,7 +18,7 @@ import java.util.List;
 
 import tds.exam.ExpandableExam;
 import tds.exam.results.mappers.utils.JaxbMapperUtils;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 /**
  * A mapper class for mapping examinee notes to the JAXB {@link tds.exam.results.trt.TDSReport.Comment} object

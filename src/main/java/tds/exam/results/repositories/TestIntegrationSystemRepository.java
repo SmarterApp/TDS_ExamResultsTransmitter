@@ -14,6 +14,7 @@
 
 package tds.exam.results.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -25,6 +26,7 @@ public interface TestIntegrationSystemRepository {
      *
      * @param examId  The exam id of the TRT
      * @param results The marshalled TRT XML blob
+     * @param rescoreJobId Support tool job id associated with rescoring this TRT
      */
-    void sendResults(final UUID examId, final String results);
+    void sendResults(final UUID examId, final String results, final Optional<String> rescoreJobId);
 }

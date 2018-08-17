@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 
 @Component

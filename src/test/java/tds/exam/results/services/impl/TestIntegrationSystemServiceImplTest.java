@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import tds.exam.results.repositories.TestIntegrationSystemRepository;
 import tds.exam.results.services.TestIntegrationSystemService;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -53,6 +53,6 @@ public class TestIntegrationSystemServiceImplTest {
         final TDSReport report = new TDSReport();
 
         testIntegrationSystemService.sendResults(examId, report);
-        verify(mockTestIntegrationSystemRepository).sendResults(eq(examId), any());
+        verify(mockTestIntegrationSystemRepository).sendResults(eq(examId), any(), any());
     }
 }

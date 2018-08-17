@@ -14,22 +14,29 @@
 
 package tds.exam.results.configuration.messaging;
 
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
 import tds.exam.results.messaging.ExamCompletedMessageListener;
+import tds.exam.results.messaging.ExamRescoreMessageListener;
 
+import static tds.exam.ExamTopics.RESCORE_TOPIC_EXCHANGE;
 import static tds.exam.ExamTopics.TOPIC_EXAM_COMPLETED;
+import static tds.exam.ExamTopics.TOPIC_EXAM_RESCORED;
 import static tds.exam.ExamTopics.TOPIC_EXCHANGE;
 
 /**
@@ -38,10 +45,11 @@ import static tds.exam.ExamTopics.TOPIC_EXCHANGE;
 @Configuration
 public class ExamResultsTransmitterMessagingConfiguration {
     private final static String QUEUE_EXAM_COMPLETION = "exam_completion_results_transmitter_queue";
+    private final static String QUEUE_EXAM_RESCORE = "exam_rescore_results_transmitter_queue";
 
     @Bean
     public TopicExchange examTopicExchange() {
-        return new TopicExchange(TOPIC_EXCHANGE, true, false);
+        return new TopicExchange(RESCORE_TOPIC_EXCHANGE, true, false);
     }
 
     @Bean
@@ -62,6 +70,33 @@ public class ExamResultsTransmitterMessagingConfiguration {
         final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(QUEUE_EXAM_COMPLETION);
+        container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
+        container.setAdviceChain(RetryInterceptorBuilder.stateless()
+            .maxAttempts(properties.getRetryAmount())
+            .recoverer(new ExamResultsTransmitterMessageRecoverer())
+            .backOffOptions(properties.getRetryInitialInterval(), properties.getRetryIntervalMultiplier(), properties.getRetryMaxInterval())
+            .build());
+        return container;
+    }
+
+    @Bean(name="examRescoreQueue")
+    public Queue examRescoreQueue() {
+        return new Queue(QUEUE_EXAM_RESCORE, true);
+    }
+
+    @Bean
+    public Binding examRescoreBinding(@Qualifier("examRescoreQueue") final Queue queue,
+                                      @Qualifier("examTopicExchange") final TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(TOPIC_EXAM_RESCORED);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer examRescoreListenerContainer(final ConnectionFactory connectionFactory,
+                                                                       final ExamRescoreMessageListener listener,
+                                                                       final ExamResultsTransmitterServiceProperties properties) {
+        final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.setQueueNames(QUEUE_EXAM_RESCORE);
         container.setMessageListener(new MessageListenerAdapter(listener, "handleMessage"));
         container.setAdviceChain(RetryInterceptorBuilder.stateless()
             .maxAttempts(properties.getRetryAmount())

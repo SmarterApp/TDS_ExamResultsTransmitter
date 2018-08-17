@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class ExamResultsTransmitterServiceProperties {
     private String sessionUrl = "";
     private String examUrl = "";
+    private String supportToolUrl = "";
     private String assessmentUrl = "";
     private String tisUrl = "";
     private String tisCallbackUrl = "";
@@ -98,6 +99,20 @@ public class ExamResultsTransmitterServiceProperties {
 
     public void setTisCallbackUrl(final String tisCallbackUrl) {
         this.tisCallbackUrl = tisCallbackUrl;
+    }
+
+    /**
+     * Get the URL for the support tool microservice.
+     *
+     * @return support tool microservice URL
+     */
+    public String getSupportToolUrl() {
+        return supportToolUrl;
+    }
+
+    public void setSupportToolUrl(final String supportToolUrl) {
+        if (supportToolUrl == null) throw new IllegalArgumentException("supportToolUrl cannot be null");
+        this.supportToolUrl = removeTrailingSlash(supportToolUrl);
     }
 
     private String removeTrailingSlash(String url) {

@@ -21,15 +21,12 @@ import org.springframework.context.annotation.Import;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.util.Comparator;
 
-import tds.common.configuration.CacheConfiguration;
-import tds.common.configuration.DataSourceConfiguration;
-import tds.common.configuration.EventLoggerConfiguration;
-import tds.common.configuration.RedisClusterConfiguration;
-import tds.common.configuration.RestTemplateConfiguration;
-import tds.common.configuration.SecurityConfiguration;
+import tds.common.configuration.*;
 import tds.common.web.advice.ExceptionAdvice;
-import tds.exam.results.trt.TDSReport;
+import tds.support.tool.testpackage.configuration.TestPackageObjectMapperConfiguration;
+import tds.trt.model.TDSReport;
 
 /**
  * Configuration for the exam results transmitter microservice
@@ -45,16 +42,45 @@ import tds.exam.results.trt.TDSReport;
     ExceptionAdvice.class
 })
 public class ExamResultsTransmitterApplicationConfiguration {
-    @Bean
-    public JAXBContext jaxbContext() throws JAXBException {
-        JAXBContext contextObj = JAXBContext.newInstance(TDSReport.class);
+
+    public static class MarshalListener extends Marshaller.Listener {
+        // TDS-1626: ExamineeAttribute nodes must come before ExamineeRelationships for TIS to parse it.
+        private class ExamineeChildComparator implements Comparator<Object> {
+            @Override
+            public int compare(Object a, Object b) {
+                return a.getClass().getName().compareTo(b.getClass().getName());
+            }
+        }
+
+        @Override
+        public void beforeMarshal(Object source) {
+            if (source instanceof TDSReport.Examinee) {
+                ((TDSReport.Examinee) source).getExamineeAttributeOrExamineeRelationship().sort(
+                    new ExamineeChildComparator());
+            }
+        }
+    }
+
+    // Exposed as public static so it can be invoked from unit tests.
+    public static Marshaller createMarshaller(JAXBContext contextObj) throws JAXBException {
         Marshaller marshallerObj = contextObj.createMarshaller();
         marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        return contextObj;
+        marshallerObj.setListener(new ExamResultsTransmitterApplicationConfiguration.MarshalListener());
+        return marshallerObj;
+    }
+
+    @Bean
+    public JAXBContext jaxbContext() throws JAXBException {
+        return JAXBContext.newInstance(TDSReport.class);
     }
 
     @Bean
     public Marshaller jaxbMarshaller(final JAXBContext jaxbContext) throws JAXBException {
-        return jaxbContext.createMarshaller();
+        return createMarshaller(jaxbContext);
+    }
+
+    @Bean("testResultsConfiguration")
+    public TestPackageObjectMapperConfiguration testResultsConfiguration() {
+        return new TestPackageObjectMapperConfiguration();
     }
 }

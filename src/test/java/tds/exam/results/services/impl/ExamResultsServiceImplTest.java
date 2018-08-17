@@ -21,8 +21,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,23 +35,11 @@ import java.util.stream.Collectors;
 import tds.assessment.Assessment;
 import tds.assessment.AssessmentWindow;
 import tds.assessment.Item;
-import tds.exam.Exam;
-import tds.exam.ExamAccommodation;
-import tds.exam.ExamItem;
-import tds.exam.ExamItemResponse;
-import tds.exam.ExamPage;
-import tds.exam.ExamineeAttribute;
-import tds.exam.ExamineeNote;
-import tds.exam.ExamineeRelationship;
-import tds.exam.ExpandableExam;
+import tds.exam.*;
+import tds.exam.results.configuration.web.ExamResultsTransmitterApplicationConfiguration;
 import tds.exam.results.model.ExamReportStatus;
-import tds.exam.results.services.AssessmentService;
-import tds.exam.results.services.ExamReportAuditService;
-import tds.exam.results.services.ExamResultsService;
-import tds.exam.results.services.ExamService;
-import tds.exam.results.services.SessionService;
-import tds.exam.results.services.TestIntegrationSystemService;
-import tds.exam.results.trt.TDSReport;
+import tds.exam.results.services.*;
+import tds.trt.model.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 import tds.session.ExternalSessionConfiguration;
 import tds.session.Session;
@@ -82,10 +73,62 @@ public class ExamResultsServiceImplTest {
     @Mock
     private TestIntegrationSystemService mockTestIntegrationSystemService;
 
+    private Marshaller marshaller;
+
     @Before
     public void setup() throws JAXBException {
+        marshaller = createMarshaller();
         examResultsService = new ExamResultsServiceImpl(mockExamService, mockSessionService, mockAssessmentService,
             mockReportValidator, mockExamReportAuditService, mockTestIntegrationSystemService);
+    }
+
+    @Test
+    // TDS-1626: ExamineeAttribute nodes must come before ExamineeRelationships for TIS to parse it.
+    public void shouldMarshalExamineeAttributesBeforeRelationships() throws IOException, JAXBException, SAXException {
+        Exam exam = random(Exam.class);
+        Session session = random(Session.class);
+        Assessment assessment = random(Assessment.class);
+        List<ExamPage> examPages = randomListOf(10, ExamPage.class);
+        List<ExamineeAttribute> examineeAttributes = randomListOf(20, ExamineeAttribute.class);
+        List<ExamineeRelationship> examineeRelationships = randomListOf(5, ExamineeRelationship.class);
+        List<ExamItem> examItems = new ArrayList<>();
+        mapMockExamPagesAndItems(examPages, examItems);
+        ExpandableExam expandableExam = new ExpandableExam.Builder(exam)
+            .withExamItems(examItems)
+            .withExamPages(examPages)
+            .withExamineeAttributes(examineeAttributes)
+            .withExamSegmentWrappers(new ArrayList<>())
+            .withExamineeRelationship(examineeRelationships)
+            .build();
+        List<Item> assessmentItems = expandableExam.getExamItems().stream()
+            .map(examItem -> new Item(examItem.getItemKey()))
+            .collect(Collectors.toList());
+        assessment.getSegments().forEach(segment -> segment.setItems(assessmentItems));
+        assessment.setAcademicYear("2017");
+        assessment.setGrades(Arrays.asList("7", "8"));
+        ExternalSessionConfiguration configuration = random(ExternalSessionConfiguration.class);
+        List<AssessmentWindow> assessmentWindows = randomListOf(1, AssessmentWindow.class);
+        when(mockExamService.findExpandableExam(exam.getId())).thenReturn(expandableExam);
+        when(mockAssessmentService.findAssessment(exam.getClientName(), exam.getAssessmentKey())).thenReturn(assessment);
+        when(mockSessionService.findSessionById(exam.getSessionId())).thenReturn(session);
+        when(mockSessionService.findExternalSessionConfigurationByClientName(exam.getClientName())).thenReturn(configuration);
+        when(mockAssessmentService.findAssessmentWindows(exam.getClientName(), exam.getAssessmentId(), exam.getStudentId() < 0, configuration))
+            .thenReturn(assessmentWindows);
+
+        TDSReport report = examResultsService.findAndSendExamResults(expandableExam.getExam().getId());
+
+        final StringWriter sw = new StringWriter();
+        marshaller.marshal(report, sw);
+        final String reportXml = sw.toString();
+        assertThat(reportXml.lastIndexOf("ExamineeAttribute"))
+            .withFailMessage("Couldn't find ExamineeAttribute")
+            .isPositive();
+        assertThat(reportXml.indexOf("ExamineeRelationship"))
+            .withFailMessage("Couldn't find ExamineeRelationship")
+            .isPositive();
+        assertThat(reportXml.lastIndexOf("ExamineeAttribute"))
+            .withFailMessage("ExamineeRelationship unexpectedly found before ExamineeAttribute")
+            .isLessThan(reportXml.indexOf("ExamineeRelationship"));
     }
 
     @Test
@@ -168,5 +211,10 @@ public class ExamResultsServiceImplTest {
 
             examItems.add(examItem);
         }
+    }
+
+    private Marshaller createMarshaller() throws JAXBException {
+        JAXBContext contextObj = JAXBContext.newInstance(TDSReport.class);
+        return ExamResultsTransmitterApplicationConfiguration.createMarshaller(contextObj);
     }
 }

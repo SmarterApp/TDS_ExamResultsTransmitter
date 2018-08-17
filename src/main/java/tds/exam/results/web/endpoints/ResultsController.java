@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
 
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 
 import java.io.IOException;
 import java.util.UUID;

@@ -27,7 +27,7 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 
 import tds.exam.results.configuration.ExamResultsTransmitterServiceProperties;
-import tds.exam.results.trt.TDSReport;
+import tds.trt.model.TDSReport;
 import tds.exam.results.validation.TDSReportValidator;
 
 import static org.mockito.Mockito.mock;
@@ -76,7 +76,7 @@ public class XSDBackedTDSReportValidatorTest {
         TDSReport report = new TDSReport();
 
         TDSReport.Examinee examinee = new TDSReport.Examinee();
-        examinee.setIsDemo((short) 0);
+        examinee.setIsDemo(false);
         examinee.setKey(1L);
 
         report.setExaminee(examinee);
